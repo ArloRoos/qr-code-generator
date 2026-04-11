@@ -34,7 +34,7 @@ public abstract class PNGChunk implements IWritable
     {
         final byte[] data = this.getData();
         final int length = data.length;
-        final long checksum = getChecksum(data);
+        final long checksum = getChecksum(data, this.type);
         final ByteBuffer buffer = ByteBuffer.allocate(RESERVED_BUFFER_SIZE + length);
 
         buffer.putInt(length);
@@ -61,11 +61,16 @@ public abstract class PNGChunk implements IWritable
             .orElseThrow();
     }
 
-    private static long getChecksum(final byte[] data)
+    private static long getChecksum(final byte[] data, final int type)
     {
+        final ByteBuffer buffer = ByteBuffer.allocate(data.length + Integer.BYTES);
+
+        buffer.put(data);
+        buffer.putInt(type);
+
         final Checksum checksum = new CRC32();
 
-        checksum.update(data);
+        checksum.update(buffer.array());
 
         return checksum.getValue();
     }
