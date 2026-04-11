@@ -1,7 +1,7 @@
 package com.aroos.qr.generator.png.chunks;
 
 /**
- * The {@link EndChunk} class implements {@link PNGChunk} representing the 
+ * The {@link EndChunk} class implements a {@link PNGChunk} representing the
  * terminator of a PNG image.
  */
 public final class EndChunk extends PNGChunk
