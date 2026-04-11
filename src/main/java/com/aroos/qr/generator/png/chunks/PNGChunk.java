@@ -56,9 +56,7 @@ public abstract class PNGChunk implements IWritable
             throw new IllegalArgumentException("Chunk type cannot be more than 4 characters.");
         }
 
-        return name.chars()
-            .reduce((i1, i2) -> i1 & i2)
-            .orElseThrow();
+        return (name.charAt(0) << 6) & (name.charAt(1) << 4) & (name.charAt(2) << 2) & name.charAt(3);
     }
 
     private static long getChecksum(final byte[] data, final int type)

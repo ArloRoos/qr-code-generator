@@ -1,6 +1,13 @@
 package com.aroos.qr.generator.png;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+
+import com.aroos.qr.generator.png.chunks.DataChunk;
+import com.aroos.qr.generator.png.chunks.EndChunk;
+import com.aroos.qr.generator.png.chunks.HeaderChunk;
+import com.aroos.qr.generator.png.chunks.PNGChunk;
 
 /**
  * The {@link PNGImage} class implements a structure for creating, modifying,
@@ -8,6 +15,17 @@ import java.nio.channels.WritableByteChannel;
  */
 public final class PNGImage implements IPNGImage
 {
+    private static final byte[] PNG_SIGNATURE = new byte[] {
+        (byte)0x89,
+        (byte)0x50,
+        (byte)0x4E,
+        (byte)0x47,
+        (byte)0x0D,
+        (byte)0x0A,
+        (byte)0x1A,
+        (byte)0x0A
+    };
+
     private final int[][] pixels;
     private final int width;
     private final int height;
@@ -66,8 +84,17 @@ public final class PNGImage implements IPNGImage
      */
     @Override
     public void write(final WritableByteChannel channel)
+        throws IOException
     {
-        // TODO write this shit
+        final PNGChunk header = new HeaderChunk(this.width, this.height);
+        final PNGChunk data = new DataChunk(this.pixels);
+        final PNGChunk end = new EndChunk();
+
+        channel.write(ByteBuffer.wrap(PNG_SIGNATURE));
+
+        header.write(channel);
+        data.write(channel);
+        end.write(channel);
     }
 
     ////////////////////////////////////////////////////////////////////////////
