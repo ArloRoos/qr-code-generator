@@ -38,7 +38,7 @@ public final class PNGImage implements IPNGImage
      */
     public PNGImage(final int width, final int height)
     {
-        this.pixels = new int[width][height];
+        this.pixels = new int[height][width];
         this.width = width;
         this.height = height;
 
@@ -76,7 +76,7 @@ public final class PNGImage implements IPNGImage
             throw new IllegalArgumentException(String.format("y value %d is out of range [0-%d].", y, this.height));
         }
 
-        this.pixels[width][height] = pixel.toInt();
+        this.pixels[y][x] = pixel.toInt();
     }
 
     /**
@@ -89,8 +89,12 @@ public final class PNGImage implements IPNGImage
         final PNGChunk header = new HeaderChunk(this.width, this.height);
         final PNGChunk data = new DataChunk(this.pixels);
         final PNGChunk end = new EndChunk();
+        final ByteBuffer signature = ByteBuffer.wrap(PNG_SIGNATURE);
 
-        channel.write(ByteBuffer.wrap(PNG_SIGNATURE));
+        while (signature.hasRemaining())
+        {
+            channel.write(signature);
+        }
 
         header.write(channel);
         data.write(channel);

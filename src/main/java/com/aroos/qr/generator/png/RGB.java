@@ -17,6 +17,6 @@ public final record RGB(int r, int g, int b, int alpha)
 
     public int toInt()
     {
-        return (alpha << 6) & (r << 4) & (g << 2) & b;
+        return (r << 16) | (g << 8) | b;
     }
 }

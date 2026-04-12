@@ -3,7 +3,8 @@ package com.aroos.qr.generator.png.chunks;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.zip.DeflaterOutputStream;
+import java.nio.ByteBuffer;
+import java.util.zip.Deflater;
 
 /**
  * The {@link DataChunk} class implements a {@link PNGChunk} representing the
@@ -11,6 +12,10 @@ import java.util.zip.DeflaterOutputStream;
  */
 public final class DataChunk extends PNGChunk
 {
+    private static final byte FILTER_TYPE = 0x00;
+    private static final int DEFLATER_BUFFER_SIZE = 1024;
+    private static final int COLOR_MASK = 0x000000FF;
+
     private final int[][] pixels;
 
     public DataChunk(final int[][] pixels)
@@ -26,23 +31,64 @@ public final class DataChunk extends PNGChunk
     @Override
     byte[] getData()
     {
-        try (
-            final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            final DeflaterOutputStream deflate = new DeflaterOutputStream(bytes))
+        final byte[] flattened = flatten(this.pixels);
+        final Deflater deflater = new Deflater(Deflater.BEST_COMPRESSION);
+        deflater.setInput(flattened);
+        deflater.finish();
+
+        try (final ByteArrayOutputStream out = new ByteArrayOutputStream())
         {
-            for (int i = 0; i < pixels.length; i++)
+            final byte[] buffer = new byte[DEFLATER_BUFFER_SIZE];
+
+            while (!deflater.finished())
             {
-                for (int j = 0; j < pixels[i].length; j++)
-                {
-                    deflate.write(pixels[i][j]);
-                }
+                final int compressedSize = deflater.deflate(buffer);
+                out.write(buffer, 0, compressedSize);
             }
 
-            return bytes.toByteArray();
+            final byte[] result = out.toByteArray();
+
+            // Correct for compression type/settings, not sure how to set this
+            // through Deflater
+            // result[0] = (byte)0x08;
+            // result[1] = (byte)0xD7;
+
+            return result;
         }
         catch (final IOException error)
         {
             throw new UncheckedIOException(error);
         }
+    }
+
+    private static byte[] flatten(final int[][] arr)
+    {
+        // Buffer size calculated by:
+        // (Width * Height * Channels) + Height
+        // The additional height addition is for the filter byte at the start of
+        // each scanline.
+        final int height = arr.length;
+        final int width = arr[0].length;
+        final ByteBuffer buf = ByteBuffer.allocate((width * height * 3) + height);
+
+        for (int i = 0; i < height; i++)
+        {
+            // Filter byte.
+            buf.put(FILTER_TYPE);
+
+            for (int j = 0; j < width; j++)
+            {
+                final int v = arr[i][j];
+                final byte r = (byte)(v >> 16 & COLOR_MASK);
+                final byte g = (byte)(v >> 8 & COLOR_MASK);
+                final byte b = (byte)(v & COLOR_MASK);
+
+                buf.put(r);
+                buf.put(g);
+                buf.put(b);
+            }
+        }
+
+        return buf.array();
     }
 }

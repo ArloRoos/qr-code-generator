@@ -16,7 +16,7 @@ public abstract class PNGChunk implements IWritable
 {
     private static final int RESERVED_BUFFER_SIZE = 12;
 
-    protected final int type;
+    private final int type;
 
     protected PNGChunk(final String type)
     {
@@ -41,8 +41,12 @@ public abstract class PNGChunk implements IWritable
         buffer.putInt(type);
         buffer.put(data);
         buffer.putInt((int)checksum);
+        buffer.flip();
 
-        channel.write(buffer);
+        while (buffer.hasRemaining())
+        {
+            channel.write(buffer);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -56,15 +60,18 @@ public abstract class PNGChunk implements IWritable
             throw new IllegalArgumentException("Chunk type cannot be more than 4 characters.");
         }
 
-        return (name.charAt(0) << 6) & (name.charAt(1) << 4) & (name.charAt(2) << 2) & name.charAt(3);
+        return (name.codePointAt(0) << 24) |
+            (name.codePointAt(1) << 16) |
+            (name.codePointAt(2) << 8) |
+            name.codePointAt(3);
     }
 
     private static long getChecksum(final byte[] data, final int type)
     {
         final ByteBuffer buffer = ByteBuffer.allocate(data.length + Integer.BYTES);
 
-        buffer.put(data);
         buffer.putInt(type);
+        buffer.put(data);
 
         final Checksum checksum = new CRC32();
 
