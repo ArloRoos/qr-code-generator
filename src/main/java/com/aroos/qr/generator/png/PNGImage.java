@@ -8,6 +8,8 @@ import com.aroos.qr.generator.png.chunks.DataChunk;
 import com.aroos.qr.generator.png.chunks.EndChunk;
 import com.aroos.qr.generator.png.chunks.HeaderChunk;
 import com.aroos.qr.generator.png.chunks.PNGChunk;
+import com.aroos.qr.generator.png.pixels.Grayscale;
+import com.aroos.qr.generator.png.pixels.IColor;
 
 /**
  * The {@link PNGImage} class implements a structure for creating, modifying,
@@ -31,28 +33,13 @@ public final class PNGImage implements IPNGImage
     private final int height;
 
     /**
-     * Initializes a new PNGImage with the given width and height, with a black
-     * background by default.
-     * @param width The width of the image.
-     * @param height The height of the image.
-     */
-    public PNGImage(final int width, final int height)
-    {
-        this.pixels = new int[height][width];
-        this.width = width;
-        this.height = height;
-
-        initializePixels(pixels, RGB.from(0, 0, 0));
-    }
-
-    /**
      * Initializes a new PNGImage with the given width and height, with a
      * default color provided.
      * @param width The width of the image.
      * @param height The height of the image.
      * @param background The default background color.
      */
-    public PNGImage(final int width, final int height, final RGB background)
+    public PNGImage(final int width, final int height, final IColor background)
     {
         this.pixels = new int[width][height];
         this.width = width;
@@ -62,21 +49,24 @@ public final class PNGImage implements IPNGImage
     }
 
     /**
+     * Initializes a new PNGImage with the given width and height, with a black
+     * background by default.
+     * @param width The width of the image.
+     * @param height The height of the image.
+     */
+    public PNGImage(final int width, final int height)
+    {
+        this(width, height, Grayscale.from(0));
+    }
+
+    /**
      * {@inheritDoc}
      */
-    public void setPixel(final int x, final int y, final RGB pixel)
+    public void setPixel(final int x, final int y, final IColor pixel)
     {
-        if (x >= this.width || x < 0)
-        {
-            throw new IllegalArgumentException(String.format("x value %d is out of range [0-%d].", x, this.width));
-        }
+        this.checkCoordinates(x, y);
 
-        if (y >= this.height || y < 0)
-        {
-            throw new IllegalArgumentException(String.format("y value %d is out of range [0-%d].", y, this.height));
-        }
-
-        this.pixels[y][x] = pixel.toInt();
+        this.pixels[y][x] = pixel.pack();
     }
 
     /**
@@ -105,9 +95,22 @@ public final class PNGImage implements IPNGImage
     // Private Helpers
     ////////////////////////////////////////////////////////////////////////////'
 
-    private static void initializePixels(final int[][] pixels, final RGB initialColor)
+    private void checkCoordinates(final int x, final int y)
     {
-        final int colorAsInt = initialColor.toInt();
+        if (x >= this.width || x < 0)
+        {
+            throw new IllegalArgumentException(String.format("x value %d is out of range [0-%d].", x, this.width));
+        }
+
+        if (y >= this.height || y < 0)
+        {
+            throw new IllegalArgumentException(String.format("y value %d is out of range [0-%d].", y, this.height));
+        }
+    }
+
+    private static void initializePixels(final int[][] pixels, final IColor initialColor)
+    {
+        final int colorAsInt = initialColor.pack();
 
         for (int i = 0; i < pixels.length; i++)
         {

@@ -12,7 +12,7 @@ public final class HeaderChunk extends PNGChunk
     private static final byte BIT_DEPTH = 0x08;
 
     // Color type 2 (RGB/truecolor)
-    private static final byte COLOR_TYPE = 0x02;
+    private static final byte COLOR_TYPE = 0x06;
 
     // Deflate compression (0 is the only valid value)
     private static final byte COMPRESSION_METHOD = 0x00;

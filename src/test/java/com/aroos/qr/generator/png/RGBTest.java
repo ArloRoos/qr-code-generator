@@ -7,6 +7,9 @@ import java.util.stream.Stream;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.aroos.qr.generator.png.pixels.IColor;
+import com.aroos.qr.generator.png.pixels.RGB;
+
 public final class RGBTest
 {
     @DataProvider
@@ -23,9 +26,9 @@ public final class RGBTest
     }
 
     @Test(dataProvider = "getTestCases")
-    public void toIntTest(final RGB pixel, final int expected)
+    public void toIntTest(final IColor pixel, final int expected)
     {
-        assertThat(pixel.toInt())
+        assertThat(pixel.pack())
             .isEqualTo(expected);
     }
 }

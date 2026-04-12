@@ -6,6 +6,8 @@ import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.util.zip.Deflater;
 
+import com.aroos.qr.generator.png.pixels.IColor;
+
 /**
  * The {@link DataChunk} class implements a {@link PNGChunk} representing the
  * actual image data of the PNG.
@@ -14,7 +16,6 @@ public final class DataChunk extends PNGChunk
 {
     private static final byte FILTER_TYPE = 0x00;
     private static final int DEFLATER_BUFFER_SIZE = 1024;
-    private static final int COLOR_MASK = 0x000000FF;
 
     private final int[][] pixels;
 
@@ -48,11 +49,6 @@ public final class DataChunk extends PNGChunk
 
             final byte[] result = out.toByteArray();
 
-            // Correct for compression type/settings, not sure how to set this
-            // through Deflater
-            // result[0] = (byte)0x08;
-            // result[1] = (byte)0xD7;
-
             return result;
         }
         catch (final IOException error)
@@ -69,7 +65,7 @@ public final class DataChunk extends PNGChunk
         // each scanline.
         final int height = arr.length;
         final int width = arr[0].length;
-        final ByteBuffer buf = ByteBuffer.allocate((width * height * 3) + height);
+        final ByteBuffer buf = ByteBuffer.allocate((width * height * 4) + height);
 
         for (int i = 0; i < height; i++)
         {
@@ -79,13 +75,8 @@ public final class DataChunk extends PNGChunk
             for (int j = 0; j < width; j++)
             {
                 final int v = arr[i][j];
-                final byte r = (byte)(v >> 16 & COLOR_MASK);
-                final byte g = (byte)(v >> 8 & COLOR_MASK);
-                final byte b = (byte)(v & COLOR_MASK);
 
-                buf.put(r);
-                buf.put(g);
-                buf.put(b);
+                buf.put(IColor.unpack(v));
             }
         }
 
