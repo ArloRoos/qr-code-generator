@@ -12,7 +12,7 @@ public final class AlphaNumericEncoding implements IQREncoding
      * {@inheritDoc}
      */
     @Override
-    public BitSet encode(final String content)
+    public BitSet encode(final String content, final int qrVersion)
     {
         return new BitSet();
     }

@@ -8,5 +8,5 @@ import java.util.BitSet;
  */
 public interface IQREncoding
 {
-    BitSet encode(String content);
+    BitSet encode(String content, int qrVersion);
 }
