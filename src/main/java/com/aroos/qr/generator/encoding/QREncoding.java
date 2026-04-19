@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * The {@link QREncoding} class implements a base class containing common
  * encoding methods for all QR encoding strategies.
  */
-abstract class QREncoding
+abstract class QREncoding implements IQREncoding
 {
     private static final int CODE_LENGTH = 4;
 
@@ -23,17 +23,26 @@ abstract class QREncoding
         this.position = new AtomicInteger(0);
     }
 
-    protected void putMode()
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BitSet encode(final String content, final int qrVersion)
     {
-        this.putInt(this.mode.code(), CODE_LENGTH);
+        this.putMode();
+        this.putLength(content.length(), qrVersion);
+        this.encodeContent(content);
+
+        return this.bits;
     }
 
-    protected void putLength(final int length, final int qrVersion)
-    {
-        this.putInt(length, this.mode.getLengthBits(qrVersion));
-    }
+    /**
+     * Encode the content string using this object's encoding method.
+     * @param content The content to encode.
+     */
+    protected abstract void encodeContent(final String content);
 
-    protected void putInt(final int val, final int length)
+    protected final void putInt(final int val, final int length)
     {
         for (int i = 0; i < length; i++)
         {
@@ -41,5 +50,15 @@ abstract class QREncoding
 
             this.bits.set(this.position.getAndIncrement(), bit);
         }
+    }
+
+    private void putMode()
+    {
+        this.putInt(this.mode.code(), CODE_LENGTH);
+    }
+
+    private void putLength(final int length, final int qrVersion)
+    {
+        this.putInt(length, this.mode.getLengthBits(qrVersion));
     }
 }
