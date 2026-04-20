@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 public final class AlphaNumericEncodingTest
 {
     @BeforeClass
+    @SuppressWarnings("unused")
     public void setUp()
     {
         // This is so dumb, but I need to make sure the class is actually
