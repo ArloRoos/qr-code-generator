@@ -32,6 +32,8 @@ abstract class QREncoding implements IQREncoding
         this.putMode();
         this.putLength(content.length(), qrVersion);
         this.encodeContent(content);
+        this.putTerminator();
+        this.putPadBytes();
 
         return this.bits;
     }
@@ -42,6 +44,11 @@ abstract class QREncoding implements IQREncoding
      */
     protected abstract void encodeContent(final String content);
 
+    /**
+     * Put the first length bits of an integer into the bit string,
+     * @param val The integer to insert.
+     * @param length The amount of bits to write from the value.
+     */
     protected final void putInt(final int val, final int length)
     {
         for (int i = 0; i < length; i++)
@@ -60,5 +67,15 @@ abstract class QREncoding implements IQREncoding
     private void putLength(final int length, final int qrVersion)
     {
         this.putInt(length, this.mode.getLengthBits(qrVersion));
+    }
+
+    private void putTerminator()
+    {
+
+    }
+
+    private void putPadBytes()
+    {
+
     }
 }

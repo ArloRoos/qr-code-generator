@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 import com.aroos.qr.generator.common.ResourceReader;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
-public final class Convert
+public final class ConvertCapacities
 {
     @Test
     public void convertTable()
@@ -44,7 +44,7 @@ public final class Convert
                 this.processLine(out, buffered.readLine(), version);
                 this.processLine(out, buffered.readLine(), version);
             }
-        }   
+        }
     }
 
     private int processVersionLine(final FileOutputStream out, final String line)
@@ -54,7 +54,7 @@ public final class Convert
 
         final int version = Integer.parseInt(tokens[0]);
         final ErrorCorrectionLevel level = parseEC(tokens[1]);
-        
+
         writeCapacity(out, version, level, EncodingMode.NUMERIC, Integer.parseInt(tokens[2]));
         writeCapacity(out, version, level, EncodingMode.ALPHANUMERIC, Integer.parseInt(tokens[3]));
         writeCapacity(out, version, level, EncodingMode.BYTE, Integer.parseInt(tokens[4]));
@@ -69,7 +69,7 @@ public final class Convert
         final String[] tokens = line.split("\t");
 
         final ErrorCorrectionLevel level = parseEC(tokens[0]);
-        
+
         writeCapacity(out, version, level, EncodingMode.NUMERIC, Integer.parseInt(tokens[1]));
         writeCapacity(out, version, level, EncodingMode.ALPHANUMERIC, Integer.parseInt(tokens[2]));
         writeCapacity(out, version, level, EncodingMode.BYTE, Integer.parseInt(tokens[3]));
@@ -94,10 +94,10 @@ public final class Convert
     }
 
     private static void writeCapacity(
-        final FileOutputStream out, 
-        final int version, 
-        final ErrorCorrectionLevel ec, 
-        final EncodingMode mode, 
+        final FileOutputStream out,
+        final int version,
+        final ErrorCorrectionLevel ec,
+        final EncodingMode mode,
         final int value) throws IOException
     {
         final String entry = String.format("%d:%s:%s:%d\n", version, ec.name(), mode.name(), value);

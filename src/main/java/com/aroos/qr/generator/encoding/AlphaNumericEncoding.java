@@ -22,8 +22,9 @@ public final class AlphaNumericEncoding implements IQREncoding
     {
         final String mappings = ResourceReader.read("alphanumeric.txt");
 
-        try (final StringReader reader = new StringReader(mappings);
-             final BufferedReader buffered = new BufferedReader(reader))
+        try (
+            final StringReader reader = new StringReader(mappings);
+            final BufferedReader buffered = new BufferedReader(reader))
         {
             buffered.lines()
                 .forEach(line ->
