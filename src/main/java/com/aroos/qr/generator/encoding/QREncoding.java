@@ -17,12 +17,14 @@ abstract class QREncoding implements IQREncoding
     protected final QRConfiguration config;
 
     private final AtomicInteger position;
+    private final int requiredBits;
 
     protected QREncoding(final QRConfiguration config)
     {
         this.config = config;
         this.bits = new BitSet();
         this.position = new AtomicInteger(0);
+        this.requiredBits = Capacities.getCodewordCount(config.version(), config.level()) * 8;
     }
 
     /**
@@ -73,11 +75,39 @@ abstract class QREncoding implements IQREncoding
 
     private void putTerminator()
     {
+        // Add a terminator of 0s until there are 4 or the total bit capacity is
+        // filled.
+        final int terminatorLength = Math.min(this.requiredBits - this.position.get(), 4);
 
+        for (int i = 0; i < terminatorLength; i++)
+        {
+            this.putInt(0, 1);
+        }
+
+        // Add padding 0s until the bit set is a multiple of 8.
+        final int paddingLength = 8 - (this.position.get() % 8);
+
+        for (int i = 0; i  < paddingLength; i++)
+        {
+            this.putInt(0, 1);
+        }
     }
 
     private void putPadBytes()
     {
+        // This division should always result in a whole number, since the
+        // position should be a multiple of 8 by this point.
+        final int padCount = (this.requiredBits - this.position.get()) / 8;
 
+        for (int i = 0; i < padCount; i++)
+        {
+            // These bytes are an arbitrary part of the QR specification, and
+            // alternate until the entire QR capacity is full.
+            final int padByte = i % 2 == 0
+                ? 236
+                : 17;
+
+            this.putInt(padByte, 8);
+        }
     }
 }
