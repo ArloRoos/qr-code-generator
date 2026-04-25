@@ -8,5 +8,10 @@ import java.util.BitSet;
  */
 public interface IQREncoding
 {
-    BitSet encode(String content, int qrVersion);
+    /**
+     * Encode the given content into a bit string.
+     * @param content The content to encode.
+     * @return A bit set containing the full data bits of the QR code.
+     */
+    BitSet encode(String content);
 }

@@ -3,6 +3,8 @@ package com.aroos.qr.generator.encoding;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.aroos.qr.generator.common.QRConfiguration;
+
 /**
  * The {@link NumericEncoding} class implements behavior for a strategy that 
  * encodes input strings using the pure numeric encoding scheme.
@@ -12,9 +14,9 @@ public final class NumericEncoding
 {
     private static final int PARTITION_SIZE = 3;
 
-    public NumericEncoding()
+    public NumericEncoding(final QRConfiguration config)
     {
-        super(EncodingMode.NUMERIC);
+        super(config);
     }
 
     /**

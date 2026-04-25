@@ -10,6 +10,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
+
 public final class AlphaNumericEncodingTest
 {
     @BeforeClass
@@ -19,7 +22,10 @@ public final class AlphaNumericEncodingTest
         // This is so dumb, but I need to make sure the class is actually
         // initialized so the static field exists. Might remove this later when
         // I have actual encoding tests.
-        final IQREncoding encoding = new AlphaNumericEncoding();
+        final IQREncoding encoding = new AlphaNumericEncoding(new QRConfiguration(
+            1,
+            ErrorCorrectionLevel.LEVEL_L,
+            EncodingMode.ALPHANUMERIC));
     }
 
     @DataProvider

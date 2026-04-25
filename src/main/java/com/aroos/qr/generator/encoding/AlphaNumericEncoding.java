@@ -4,17 +4,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.aroos.qr.generator.common.QRConfiguration;
 import com.aroos.qr.generator.common.ResourceReader;
 
 /**
  * The {@link AlphaNumericEncoding} class implements behavior for a strategy that
  * encodes input strings using the alphanumeric encoding scheme.
  */
-public final class AlphaNumericEncoding implements IQREncoding
+public final class AlphaNumericEncoding extends QREncoding
 {
     private static final Map<Character, Integer> CHARACTER_ENCODING = new HashMap<>();
 
@@ -41,12 +41,16 @@ public final class AlphaNumericEncoding implements IQREncoding
         }
     }
 
+    public AlphaNumericEncoding(final QRConfiguration config)
+    {
+        super(config);
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public BitSet encode(final String content, final int qrVersion)
+    protected void encodeContent(final String content)
     {
-        return new BitSet();
     }
 }

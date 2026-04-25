@@ -3,6 +3,8 @@ package com.aroos.qr.generator.encoding;
 import java.util.BitSet;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.aroos.qr.generator.common.QRConfiguration;
+
 /**
  * The {@link QREncoding} class implements a base class containing common
  * encoding methods for all QR encoding strategies.
@@ -12,14 +14,14 @@ abstract class QREncoding implements IQREncoding
     private static final int CODE_LENGTH = 4;
 
     protected final BitSet bits;
+    protected final QRConfiguration config;
 
-    private final EncodingMode mode;
     private final AtomicInteger position;
 
-    protected QREncoding(final EncodingMode mode)
+    protected QREncoding(final QRConfiguration config)
     {
+        this.config = config;
         this.bits = new BitSet();
-        this.mode = mode;
         this.position = new AtomicInteger(0);
     }
 
@@ -27,10 +29,10 @@ abstract class QREncoding implements IQREncoding
      * {@inheritDoc}
      */
     @Override
-    public BitSet encode(final String content, final int qrVersion)
+    public BitSet encode(final String content)
     {
         this.putMode();
-        this.putLength(content.length(), qrVersion);
+        this.putLength(content.length());
         this.encodeContent(content);
         this.putTerminator();
         this.putPadBytes();
@@ -61,12 +63,12 @@ abstract class QREncoding implements IQREncoding
 
     private void putMode()
     {
-        this.putInt(this.mode.code(), CODE_LENGTH);
+        this.putInt(this.config.mode().code(), CODE_LENGTH);
     }
 
-    private void putLength(final int length, final int qrVersion)
+    private void putLength(final int length)
     {
-        this.putInt(length, this.mode.getLengthBits(qrVersion));
+        this.putInt(length, this.config.mode().getLengthBits(this.config.version()));
     }
 
     private void putTerminator()
