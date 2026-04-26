@@ -1,7 +1,5 @@
 package com.aroos.qr.generator.encoding;
 
-import java.util.Collection;
-
 import com.aroos.qr.generator.common.QRConfiguration;
 
 /**
@@ -24,9 +22,7 @@ public final class NumericEncoding
     @Override
     protected void encodeContent(final String content)
     {
-        final Collection<String> partitioned = this.partition(content, PARTITION_SIZE);
-
-        partitioned.forEach(s ->
+        this.partition(content, PARTITION_SIZE).forEach(s ->
         {
             // Note that for all encoding methods, string validity is checked at
             // the factory level, meaning we can assume all characters in the

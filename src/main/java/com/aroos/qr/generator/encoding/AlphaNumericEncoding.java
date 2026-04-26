@@ -16,6 +16,7 @@ import com.aroos.qr.generator.common.ResourceReader;
  */
 public final class AlphaNumericEncoding extends QREncoding
 {
+    private static final int PARTITION_SIZE = 2;
     private static final Map<Character, Integer> CHARACTER_ENCODING = new HashMap<>();
 
     static
@@ -52,5 +53,24 @@ public final class AlphaNumericEncoding extends QREncoding
     @Override
     protected void encodeContent(final String content)
     {
+        this.partition(content, PARTITION_SIZE).forEach(s ->
+        {
+            if (s.length() == 2)
+            {
+                final int value =
+                    CHARACTER_ENCODING.get(s.charAt(0)) * 45 +
+                    CHARACTER_ENCODING.get(s.charAt(1));
+
+                this.putInt(value, 11);
+            }
+            // The original string was an odd length, handle the final character
+            // slightly different.
+            else
+            {
+                final int value = CHARACTER_ENCODING.get(s.charAt(0));
+
+                this.putInt(value, 6);
+            }
+        });
     }
 }

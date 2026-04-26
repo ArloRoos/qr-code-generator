@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 import com.aroos.qr.generator.common.QRConfiguration;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
-public final class AlphaNumericEncodingTest
+public final class AlphaNumericEncodingTest extends BitEncodingTest
 {
     @BeforeClass
     @SuppressWarnings("unused")
@@ -39,7 +39,17 @@ public final class AlphaNumericEncodingTest
             .toArray(Object[][]::new);
     }
 
-    @Test(dataProvider = "getCharacterMappingTestCases")
+    @DataProvider
+    public Object[][] getEncodingTestCases()
+    {
+       return Stream.of(
+            new Object[] { "HELLO WORLD", "0110000101101111000110100010111001011011100010011010100001101"},
+            new Object[] { "01 A", "0000000000111001011110"},
+            new Object[] { "ABC", "00111001101001100"})
+            .toArray(Object[][]::new);
+    }
+
+    @Test(dataProvider = "getCharacterMappingTestCases", invocationCount = ITERATIONS)
     public void characterMappingTest(final char character, final int encoded)
     {
         final Map<Character, Integer> mappings = this.getMappings();
@@ -56,6 +66,12 @@ public final class AlphaNumericEncodingTest
 
         assertThat(mappings.get('a'))
             .isNull();
+    }
+
+    @Test(dataProvider = "getEncodingTestCases")
+    public void numericEncodingTest(final String content, final String expectedBits)
+    {
+        this.encodingTest(content, EncodingMode.ALPHANUMERIC, expectedBits);
     }
 
     @SuppressWarnings("unchecked")

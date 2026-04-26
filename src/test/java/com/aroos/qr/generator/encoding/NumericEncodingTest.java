@@ -17,9 +17,9 @@ public final class NumericEncodingTest extends BitEncodingTest
            .toArray(Object[][]::new);
     }
 
-    @Test(dataProvider = "getTestCases")
+    @Test(dataProvider = "getTestCases", invocationCount = ITERATIONS)
     public void numericEncodingTest(final String content, final String expectedBits)
     {
-        encodingTest(content, EncodingMode.NUMERIC, expectedBits);
+        this.encodingTest(content, EncodingMode.NUMERIC, expectedBits);
     }
 }

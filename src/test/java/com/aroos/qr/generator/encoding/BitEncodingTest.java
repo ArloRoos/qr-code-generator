@@ -17,6 +17,8 @@ import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
 class BitEncodingTest
 {
+    protected static final int ITERATIONS = 15;
+
     private static final Random RANDOM = new Random(Instant.now().getEpochSecond());
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
 
@@ -52,7 +54,11 @@ class BitEncodingTest
 
             // Validate terminator 0s.
             validateSection(result, toBinaryString(0, 4));
-            validateSection(result, toBinaryString(0, 8 - (COUNTER.get() % 8)));
+
+            if (COUNTER.get() % 8 != 0)
+            {
+                validateSection(result, toBinaryString(0, 8 - (COUNTER.get() % 8)));
+            }
 
             // Validate pad bytes.
             final AtomicBoolean switcher = new AtomicBoolean(false);
