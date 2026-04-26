@@ -1,6 +1,8 @@
 package com.aroos.qr.generator.encoding;
 
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.aroos.qr.generator.common.QRConfiguration;
@@ -12,6 +14,9 @@ import com.aroos.qr.generator.common.QRConfiguration;
 abstract class QREncoding implements IQREncoding
 {
     private static final int CODE_LENGTH = 4;
+    private static final int MAX_TERMINATOR_LENGTH = 4;
+    private static final int PAD_BYTE_1 = 236;
+    private static final int PAD_BYTE_2 = 17;
 
     protected final BitSet bits;
     protected final QRConfiguration config;
@@ -57,10 +62,28 @@ abstract class QREncoding implements IQREncoding
     {
         for (int i = 0; i < length; i++)
         {
-            final boolean bit = (((val >> i) & 1) == 1);
+            final boolean bit = ((val >> (length - i - 1)) & 1) == 1;
 
             this.bits.set(this.position.getAndIncrement(), bit);
         }
+    }
+
+    /**
+     * Partition the given string into a list of substrings with the given size.
+     * @param content The content to partition.
+     * @param partitionSize The size of each partition.
+     * @return The partitions of the original string.
+     */
+    protected final Collection<String> partition(final String content, final int partitionSize)
+    {
+        final Collection<String> parts = new ArrayList<>();
+
+        for (int i = 0; i < content.length(); i += partitionSize)
+        {
+            parts.add(content.substring(i, Math.min(content.length(), i + partitionSize)));
+        }
+
+        return parts;
     }
 
     private void putMode()
@@ -77,7 +100,7 @@ abstract class QREncoding implements IQREncoding
     {
         // Add a terminator of 0s until there are 4 or the total bit capacity is
         // filled.
-        final int terminatorLength = Math.min(this.requiredBits - this.position.get(), 4);
+        final int terminatorLength = Math.min(this.requiredBits - this.position.get(), MAX_TERMINATOR_LENGTH);
 
         for (int i = 0; i < terminatorLength; i++)
         {
@@ -85,11 +108,14 @@ abstract class QREncoding implements IQREncoding
         }
 
         // Add padding 0s until the bit set is a multiple of 8.
-        final int paddingLength = 8 - (this.position.get() % 8);
-
-        for (int i = 0; i  < paddingLength; i++)
+        if (this.position.get() < this.requiredBits && this.position.get() % 8 != 0)
         {
-            this.putInt(0, 1);
+            final int paddingLength = 8 - (this.position.get() % 8);
+
+            for (int i = 0; i < paddingLength; i++)
+            {
+                this.putInt(0, 1);
+            }
         }
     }
 
@@ -104,8 +130,8 @@ abstract class QREncoding implements IQREncoding
             // These bytes are an arbitrary part of the QR specification, and
             // alternate until the entire QR capacity is full.
             final int padByte = i % 2 == 0
-                ? 236
-                : 17;
+                ? PAD_BYTE_1
+                : PAD_BYTE_2;
 
             this.putInt(padByte, 8);
         }

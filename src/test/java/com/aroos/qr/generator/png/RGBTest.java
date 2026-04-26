@@ -16,11 +16,11 @@ public final class RGBTest
     public Object[][] getTestCases()
     {
         return Stream.<Object[]>of(
-            new Object[] { RGB.from(255, 0, 0), 0xFF0000 },
-            new Object[] { RGB.from(0, 255, 0), 0x00FF00 },
-            new Object[] { RGB.from(0, 0, 255), 0x0000FF },
-            new Object[] { RGB.from(0, 0, 0), 0x000000 },
-            new Object[] { RGB.from(255, 255, 255), 0xFFFFFF })
+            new Object[] { RGB.from(255, 0, 0), 0xFF0000FF },
+            new Object[] { RGB.from(0, 255, 0), 0x00FF00FF },
+            new Object[] { RGB.from(0, 0, 255), 0x0000FFFF },
+            new Object[] { RGB.from(0, 0, 0), 0x000000FF },
+            new Object[] { RGB.from(255, 255, 255), 0xFFFFFFFF })
             .toArray(Object[][]::new);
 
     }

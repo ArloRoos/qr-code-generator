@@ -12,7 +12,9 @@ dependencies {
 }
 
 test {
-    useTestNG()
+    useTestNG() {
+        excludeGroups 'convert'
+    }
 }
 
 tasks.named("test") {

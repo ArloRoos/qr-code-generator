@@ -15,7 +15,7 @@ import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
 public final class ConvertCapacities
 {
-    @Test
+    @Test(groups = "convert")
     public void convertTable()
         throws IOException
     {

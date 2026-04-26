@@ -15,7 +15,7 @@ import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
 public final class ConvertCodewords
 {
-    @Test
+    @Test(groups = "convert")
     public void convertTest()
         throws IOException
     {

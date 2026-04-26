@@ -1,6 +1,5 @@
 package com.aroos.qr.generator.encoding;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import com.aroos.qr.generator.common.QRConfiguration;
@@ -25,7 +24,7 @@ public final class NumericEncoding
     @Override
     protected void encodeContent(final String content)
     {
-        final Collection<String> partitioned = partition(content);
+        final Collection<String> partitioned = this.partition(content, PARTITION_SIZE);
 
         partitioned.forEach(s ->
         {
@@ -50,17 +49,5 @@ public final class NumericEncoding
                 this.putInt(value, 10);
             }
         });
-    }
-
-    private static Collection<String> partition(final String content)
-    {
-        final Collection<String> parts = new ArrayList<>();
-
-        for (int i = 0; i < content.length(); i += PARTITION_SIZE)
-        {
-            parts.add(content.substring(i, Math.min(content.length(), i + PARTITION_SIZE)));
-        }
-
-        return parts;
     }
 }
