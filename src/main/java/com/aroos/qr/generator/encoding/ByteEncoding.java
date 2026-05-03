@@ -1,5 +1,7 @@
 package com.aroos.qr.generator.encoding;
 
+import java.nio.charset.StandardCharsets;
+
 import com.aroos.qr.generator.common.QRConfiguration;
 
 /**
@@ -8,7 +10,6 @@ import com.aroos.qr.generator.common.QRConfiguration;
  */
 public final class ByteEncoding extends QREncoding
 {
-
     public ByteEncoding(final QRConfiguration config)
     {
         super(config);
@@ -20,5 +21,9 @@ public final class ByteEncoding extends QREncoding
     @Override
     protected void encodeContent(final String content)
     {
+        for (final byte b : content.getBytes(StandardCharsets.ISO_8859_1))
+        {
+            this.putInt(b, 8);
+        }
     }
 }
