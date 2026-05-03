@@ -2,6 +2,7 @@
 package com.aroos.qr.generator.math;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * The {@link AlgebraicTerm} class implements an algebraic polynomial term,
@@ -10,9 +11,9 @@ import java.util.Objects;
 public final class AlgebraicTerm implements ITerm
 {
     private final double coefficient;
-    private final double exponent;
+    private final int exponent;
 
-    AlgebraicTerm(final double coefficient, final double exponent)
+    public AlgebraicTerm(final double coefficient, final int exponent)
     {
         this.coefficient = coefficient;
         this.exponent = exponent;
@@ -32,11 +33,7 @@ public final class AlgebraicTerm implements ITerm
             ? "%d".formatted((int)this.coefficient)
             : "%.2f".formatted(this.coefficient);
 
-        final String formattedExponent = (int)this.exponent == this.exponent
-            ? "%d".formatted((int)this.exponent)
-            : "%.2f".formatted(this.exponent);
-
-        return "%sx^%s".formatted(formattedCoefficient, formattedExponent);
+        return "%sx^%d".formatted(formattedCoefficient, this.exponent);
     }
 
     /**
@@ -60,6 +57,24 @@ public final class AlgebraicTerm implements ITerm
     }
 
     ////////////////////////////////////////////////////////////////////////////
+    // region Comparable
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(ITerm other)
+    {
+        return Stream.of(
+            Double.compare(other.getExponent(), this.getExponent()),
+            Double.compare(other.getCoefficient(), this.getCoefficient()))
+            .takeWhile(result -> result != 0)
+            .findAny()
+            .orElse(0);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
     // region ITerm
     ////////////////////////////////////////////////////////////////////////////
 
@@ -76,7 +91,7 @@ public final class AlgebraicTerm implements ITerm
      * {@inheritDoc}
      */
     @Override
-    public double getExponent()
+    public int getExponent()
     {
         return this.exponent;
     }
@@ -85,7 +100,7 @@ public final class AlgebraicTerm implements ITerm
      * {@inheritDoc}
      */
     @Override
-    public ITerm exponentiated(final double scalar)
+    public ITerm exponentiated(final int scalar)
     {
         return new AlgebraicTerm(this.coefficient, this.exponent * scalar);
     }

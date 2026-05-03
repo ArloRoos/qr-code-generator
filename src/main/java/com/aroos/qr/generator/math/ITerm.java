@@ -4,7 +4,7 @@ package com.aroos.qr.generator.math;
  * The {@link ITerm} interface defines behavior for one "term" in a polynomial.
  * A term is comprised of two values: the exponent power and the coefficient.
  */
-public interface ITerm extends IOperand<ITerm>
+public interface ITerm extends IOperand<ITerm>, Comparable<ITerm>
 {
     /**
      * Multiplies this term's coefficient by a scalar.
@@ -16,7 +16,7 @@ public interface ITerm extends IOperand<ITerm>
     /**
      * Divides this term's coefficient by a scalar.
      * @param scalar The scalar to divide by.
-     * @return The result of the division.
+     * @return The quotient.
      */
     ITerm dividedBy(double scalar);
 
@@ -25,7 +25,7 @@ public interface ITerm extends IOperand<ITerm>
      * @param scalar The scalar to multiply this term's exponent by.
      * @return The exponentiation term.
      */
-    ITerm exponentiated(double scalar);
+    ITerm exponentiated(int scalar);
 
     /**
      * Gets this term's coefficient.
@@ -37,16 +37,5 @@ public interface ITerm extends IOperand<ITerm>
      * Gets this term's exponent.
      * @return The exponent.
      */
-    double getExponent();
-
-    /**
-     * Creates a new term given the coefficient and exponent.
-     * @param coefficient The coefficient.
-     * @param exponent The exponent.
-     * @return A new algebraic term.
-     */
-    static ITerm of(double coefficient, double exponent)
-    {
-        return new AlgebraicTerm(coefficient, exponent);
-    }
+    int getExponent();
 }

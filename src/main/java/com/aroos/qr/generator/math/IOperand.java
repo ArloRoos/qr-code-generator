@@ -16,7 +16,7 @@ public interface IOperand<T>
     /**
      * Returns the result of subtracting another operand from this one.
      * @param other The other operand.
-     * @return The result of the subtraction.
+     * @return The difference of the operation.
      */
     T minus(T other);
 
@@ -30,7 +30,7 @@ public interface IOperand<T>
     /**
      * Returns the result of dividing this by another operand.
      * @param other The other operand.
-     * @return The result of the division.
+     * @return The quotient of the operation.
      */
     T dividedBy(T other);
 }

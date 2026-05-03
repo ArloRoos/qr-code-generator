@@ -15,12 +15,15 @@ test {
     useTestNG() {
         excludeGroups 'convert'
     }
+    testLogging {
+        showStandardStreams = true
+    }
 }
 
 tasks.named("test") {
     doLast {
         def path = "file://${buildDir}\\reports\\tests\\test\\index.html"
 
-        println "Test run completed: html report available at ${path}"
+        println "\nTest run completed: html report available at ${path}"
     }
 }
