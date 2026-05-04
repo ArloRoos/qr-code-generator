@@ -141,7 +141,7 @@ public final class GaloisTerm implements ITerm
     @Override
     public ITerm exponentiated(final int scalar)
     {
-        return new AlgebraicTerm(this.coefficient, this.exponent * scalar);
+        return new GaloisTerm(this.coefficient, this.exponent * scalar);
     }
 
     /**
@@ -150,7 +150,7 @@ public final class GaloisTerm implements ITerm
     @Override
     public ITerm multipliedBy(final double scalar)
     {
-        return new AlgebraicTerm(this.coefficient * scalar, this.exponent);
+        return new GaloisTerm(galoisMultiply(this.coefficient, (int)scalar), this.exponent);
     }
 
     /**
@@ -159,7 +159,7 @@ public final class GaloisTerm implements ITerm
     @Override
     public ITerm dividedBy(final double scalar)
     {
-        return new AlgebraicTerm(this.coefficient / scalar, this.exponent);
+        throw new UnsupportedOperationException("Division is not supported for a Galois field term.");
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -172,9 +172,14 @@ public final class GaloisTerm implements ITerm
     @Override
     public ITerm dividedBy(final ITerm other)
     {
-        return new AlgebraicTerm(
-            this.coefficient / other.getCoefficient(),
-            this.exponent - other.getExponent());
+        // This is a special case, since it's only used in polynomial division.
+        // Generic division isn't necessarily defined in a Galois field, so the
+        // result is simply the thing that I'd want to multiply the generator
+        // polynomial by during long division. In this case that's just the 
+        // coefficient of this term.
+        return new GaloisTerm(
+            this.coefficient,
+            0);
     }
 
     /**
@@ -183,8 +188,8 @@ public final class GaloisTerm implements ITerm
     @Override
     public ITerm multipliedBy(final ITerm other)
     {
-        return new AlgebraicTerm(
-            this.coefficient * other.getCoefficient(),
+        return new GaloisTerm(
+            galoisAdd(this.coefficient, (int)other.getCoefficient()),
             this.exponent + other.getExponent());
     }
 
@@ -200,8 +205,8 @@ public final class GaloisTerm implements ITerm
                 "Invalid operation (different exponents): %s - %s".formatted(this, other));
         }
 
-        return new AlgebraicTerm(
-            this.coefficient - other.getCoefficient(),
+        return new GaloisTerm(
+            galoisAdd(this.coefficient, (int)other.getCoefficient()),
             this.exponent);
     }
 
@@ -217,8 +222,8 @@ public final class GaloisTerm implements ITerm
                 "Invalid operation (different exponents): %s + %s".formatted(this, other));
         }
 
-        return new AlgebraicTerm(
-            this.coefficient + other.getCoefficient(),
+        return new GaloisTerm(
+            galoisAdd(this.coefficient, (int)other.getCoefficient()),
             this.exponent);
     }
 
@@ -226,13 +231,17 @@ public final class GaloisTerm implements ITerm
     // region Private helpers
     ////////////////////////////////////////////////////////////////////////////
     
-    private static int addCoefficient(final int a, final int b)
+    private static int galoisAdd(final int a, final int b)
     {
-
+        return a ^ b;
     }
 
-    private static int addExponent(final int a, final int b)
+    private static int galoisMultiply(final int a, final int b)
     {
+        final int aExp = ANTILOGS.get(a);
+        final int bExp = ANTILOGS.get(b);
+        final int expSum = (aExp + bExp) % 255;
 
+        return LOGS.get(expSum);
     }
 }

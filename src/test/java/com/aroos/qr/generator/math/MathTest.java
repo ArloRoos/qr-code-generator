@@ -5,9 +5,14 @@ import java.util.List;
 
 abstract class MathTest
 {
-    protected static ITerm term(final double c, final int e)
+    protected static ITerm algebraicTerm(final double c, final int e)
     {
         return new AlgebraicTerm(c, e);
+    }
+
+    protected static ITerm galoisTerm(final int c, final int e)
+    {
+        return new GaloisTerm(c, e);
     }
 
     protected static IPolynomial poly(final String stringForm)
@@ -27,11 +32,11 @@ abstract class MathTest
                     ? 1
                     : Integer.parseInt(term.substring(term.indexOf("^") + 1));
 
-                termList.add(term(c, e));
+                termList.add(algebraicTerm(c, e));
             }
             else
             {
-                termList.add(term(Double.parseDouble(term), 0));
+                termList.add(algebraicTerm(Double.parseDouble(term), 0));
             }
         }
 
