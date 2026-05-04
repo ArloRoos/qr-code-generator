@@ -7,6 +7,8 @@ import java.util.stream.Stream;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import com.aroos.qr.generator.math.IPolynomial.IQuotient;
+
 public final class PolynomialTest extends MathTest
 {
     @DataProvider
@@ -48,8 +50,9 @@ public final class PolynomialTest extends MathTest
     {
        return Stream.of(
             new Object[] { "2x^3 + x^2 + 1", "x + 3", "2x^4 + 7x^3 + 3x^2 + x + 3"},
-            new Object[] { "-1x^2 + -2x", "-3x^2 + x + -1", "2x^2 + -3x + -1"},
-            new Object[] { "0.2x + -2", "0.5x + -5", "-0.3x + 3"})
+            new Object[] { "-1x^2 + -2x", "-3x^2 + x + -1", "3x^4 + 5x^3 + -1x^2 + 2x"},
+            new Object[] { "0.2x + -2", "0.5x + -5", "0.1x^2 + -2x + 10"},
+            new Object[] { "x + 1", "3x^2", "3x^3 + 3x^2"})
             .toArray(Object[][]::new);
     }
 
@@ -58,5 +61,30 @@ public final class PolynomialTest extends MathTest
     {
         assertThat(poly(p1).minus(poly(p2)))
             .isEqualTo(poly(expectedDifference));
+    }
+
+    @DataProvider
+    public Object[][] divisionTestCases()
+    {
+       return Stream.of(
+            new Object[] { "3x^2 + x + -1", "x + 1", "3x + -2", "1"},
+            new Object[] { "x^3 + -2x^2 + -4", "x + -3", "x^2 + x + 3", "5"})
+            .toArray(Object[][]::new);
+    }
+
+    @Test(dataProvider = "divisionTestCases")
+    public void divisionTest(
+        final String dividend,
+        final String divisor,
+        final String expectedQuotient,
+        final String expectedRemainder)
+    {
+        final IQuotient quotient = poly(dividend).dividedByExact(poly(divisor));
+
+        assertThat(quotient.getQuotient())
+            .isEqualTo(poly(expectedQuotient));
+
+        assertThat(quotient.getRemainder())
+            .isEqualTo(poly(expectedRemainder));
     }
 }

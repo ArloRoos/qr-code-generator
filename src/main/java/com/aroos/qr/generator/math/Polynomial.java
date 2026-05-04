@@ -1,5 +1,6 @@
 package com.aroos.qr.generator.math;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +20,9 @@ public final class Polynomial implements IPolynomial
     {
         this.terms = new HashMap<>();
 
-        terms.forEach(this::addSingleTerm);
+        terms.stream()
+            .filter(t -> t.getCoefficient() != 0)
+            .forEach(t -> addSingleTerm(t, this.terms));
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -72,9 +75,52 @@ public final class Polynomial implements IPolynomial
     // region IPolynomial
     ////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<ITerm> getTerms()
     {
         return List.copyOf(this.terms.values());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ITerm getLargestTerm()
+    {
+        return this.getTerms().stream()
+            .sorted()
+            .toList()
+            .get(0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IQuotient dividedByExact(final IPolynomial other)
+    {
+        final List<ITerm> quotientTerms = new ArrayList<>();
+        IPolynomial dividend = this;
+
+        while (dividend.getLargestTerm().getExponent() >= other.getLargestTerm().getExponent())
+        {
+            final ITerm dividendLargest = dividend.getLargestTerm();
+            final ITerm divisorLargest = other.getLargestTerm();
+            final ITerm multiplier = dividendLargest.dividedBy(divisorLargest);
+            final IPolynomial multiplierPoly = new Polynomial(List.of(multiplier));
+            final IPolynomial subtractorPoly = other.multipliedBy(multiplierPoly);
+
+            dividend = dividend.minus(subtractorPoly);
+
+            quotientTerms.add(multiplier);
+        }
+
+        final IPolynomial quotient = new Polynomial(quotientTerms);
+
+        return new Quotient(quotient, dividend);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -87,9 +133,11 @@ public final class Polynomial implements IPolynomial
     @Override
     public IPolynomial plus(IPolynomial other)
     {
-        other.getTerms().forEach(this::addSingleTerm);
+        final Map<Integer, ITerm> cpy = this.getMutableTermCopy();
 
-        return this;
+        other.getTerms().forEach(t -> addSingleTerm(t, cpy));
+
+        return fromTermMap(cpy);
     }
 
     /**
@@ -98,9 +146,11 @@ public final class Polynomial implements IPolynomial
     @Override
     public IPolynomial minus(IPolynomial other)
     {
-        other.getTerms().forEach(this::subtractSingleTerm);
+        final Map<Integer, ITerm> cpy = this.getMutableTermCopy();
 
-        return this;
+        other.getTerms().forEach(t -> subtractSingleTerm(t, cpy));
+
+        return fromTermMap(cpy);
     }
 
     /**
@@ -109,9 +159,11 @@ public final class Polynomial implements IPolynomial
     @Override
     public IPolynomial multipliedBy(IPolynomial other)
     {
-        other.getTerms().forEach(this::multiplySingleTerm);
+        final Map<Integer, ITerm> cpy = this.getMutableTermCopy();
 
-        return this;
+        other.getTerms().forEach(t -> multiplySingleTerm(t, cpy));
+
+        return fromTermMap(cpy);
     }
 
     /**
@@ -120,32 +172,80 @@ public final class Polynomial implements IPolynomial
     @Override
     public IPolynomial dividedBy(final IPolynomial other)
     {
-        // TODO
-        return null;
+        throw new UnsupportedOperationException(
+            "Non-remainder polynomial division not supported. Please use IPolynomial.dividedByExact().");
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // region Public types
+    ////////////////////////////////////////////////////////////////////////////
+
+    private static class Quotient implements IQuotient
+    {
+        private final IPolynomial quotient;
+        private final IPolynomial remainder;
+
+        private Quotient(final IPolynomial quotient, final IPolynomial remainder)
+        {
+            this.quotient = quotient;
+            this.remainder = remainder;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public IPolynomial getQuotient()
+        {
+            return this.quotient;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public IPolynomial getRemainder()
+        {
+            return this.remainder;
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
     // region Private helpers
     ////////////////////////////////////////////////////////////////////////////
 
-    private void addSingleTerm(final ITerm term)
+    private Map<Integer, ITerm> getMutableTermCopy()
     {
-        this.terms.merge(term.getExponent(), term, (t1, t2) -> t1.plus(t2));
+        final Map<Integer, ITerm> cpy = new HashMap<>();
+
+        cpy.putAll(this.terms);
+
+        return cpy;
     }
 
-    private void subtractSingleTerm(final ITerm term)
+    private static void addSingleTerm(final ITerm term, final Map<Integer, ITerm> terms)
     {
-        this.terms.merge(term.getExponent(), term, (t1, t2) -> t1.minus(t2));
+        terms.merge(term.getExponent(), term, (t1, t2) -> t1.plus(t2));
     }
 
-    private void multiplySingleTerm(final ITerm term)
+    private static void subtractSingleTerm(final ITerm term, final Map<Integer, ITerm> terms)
     {
-        final List<ITerm> termsCpy = this.getTerms();
+        terms.merge(term.getExponent(), term.multipliedBy(-1), (t1, t2) -> t1.minus(t2.multipliedBy(-1)));
+    }
 
-        this.terms.clear();
+    private static void multiplySingleTerm(final ITerm term, final Map<Integer, ITerm> terms)
+    {
+        final List<ITerm> termsCpy = terms.values().stream().toList();
+
+        terms.clear();
 
         termsCpy.stream()
-            .map(term::plus)
-            .forEach(this::addSingleTerm);
+            .map(term::multipliedBy)
+            .forEach(t -> addSingleTerm(t, terms));
+    }
+
+    private static IPolynomial fromTermMap(final Map<Integer, ITerm> terms)
+    {
+        return new Polynomial(terms.values().stream().toList());
     }
 }
