@@ -1,14 +1,10 @@
 package com.aroos.qr.generator.encoding;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.aroos.qr.generator.common.LookupTables;
 import com.aroos.qr.generator.common.QRConfiguration;
-import com.aroos.qr.generator.common.ResourceReader;
 
 /**
  * The {@link AlphaNumericEncoding} class implements behavior for a strategy that
@@ -21,25 +17,11 @@ public final class AlphaNumericEncoding extends QREncoding
 
     static
     {
-        final String mappings = ResourceReader.read("alphanumeric.txt");
-
-        try (
-            final StringReader reader = new StringReader(mappings);
-            final BufferedReader buffered = new BufferedReader(reader))
-        {
-            buffered.lines()
-                .forEach(line ->
-                {
-                    final char character = line.charAt(0);
-                    final int encoded = Integer.parseInt(line.substring(2));
-
-                    CHARACTER_ENCODING.put(character, encoded);
-                });
-        }
-        catch (final IOException error)
-        {
-            throw new UncheckedIOException(error);
-        }
+        LookupTables.fillTable(
+            "alphanumeric.txt",
+            line -> line.charAt(0),
+            line -> Integer.parseInt(line.substring(2)),
+            CHARACTER_ENCODING::put);
     }
 
     public AlphaNumericEncoding(final QRConfiguration config)

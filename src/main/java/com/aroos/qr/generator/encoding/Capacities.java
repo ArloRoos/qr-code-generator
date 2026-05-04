@@ -1,16 +1,11 @@
 package com.aroos.qr.generator.encoding;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.UncheckedIOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.aroos.qr.generator.common.ResourceReader;
+import com.aroos.qr.generator.common.LookupTables;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
 /**
@@ -35,55 +30,25 @@ public final class Capacities
 
     static
     {
-        final String mappings = ResourceReader.read("capacities.txt");
+        LookupTables.fillTable(
+            "capacities.txt",
+            CAPACITY_REGEX,
+            match -> new CapacityKey(
+                Integer.parseInt(match.group(VERSION_GROUP)),
+                ErrorCorrectionLevel.valueOf(match.group(LEVEL_GROUP)),
+                EncodingMode.valueOf(match.group(MODE_GROUP))),
+            match -> Integer.parseInt(match.group(VALUE_GROUP)),
+            CAPACITY_MAP::put);
 
-        try (
-            final StringReader reader = new StringReader(mappings);
-            final BufferedReader buffered = new BufferedReader(reader))
-        {
-            buffered.lines()
-                .map(CAPACITY_REGEX::matcher)
-                .filter(Matcher::find)
-                .forEach(m ->
-                {
-                    final CapacityKey key = new CapacityKey(
-                        Integer.parseInt(m.group(VERSION_GROUP)),
-                        ErrorCorrectionLevel.valueOf(m.group(LEVEL_GROUP)),
-                        EncodingMode.valueOf(m.group(MODE_GROUP)));
+        LookupTables.fillTable(
+            "data_codewords.txt",
+            CODEWORDS_REGEX,
+            match -> new CodewordsKey(
+                Integer.parseInt(match.group(VERSION_GROUP)),
+                ErrorCorrectionLevel.valueOf(match.group(LEVEL_GROUP))),
+            match -> Integer.parseInt(match.group(VALUE_GROUP)),
+            CODEWORDS_MAP::put);
 
-                    CAPACITY_MAP.put(key, Integer.parseInt(m.group(VALUE_GROUP)));
-                });
-        }
-        catch (final IOException error)
-        {
-            throw new UncheckedIOException(error);
-        }
-    }
-
-    static
-    {
-        final String mappings = ResourceReader.read("data_codewords.txt");
-
-        try (
-            final StringReader reader = new StringReader(mappings);
-            final BufferedReader buffered = new BufferedReader(reader))
-        {
-            buffered.lines()
-                .map(CODEWORDS_REGEX::matcher)
-                .filter(Matcher::find)
-                .forEach(m ->
-                {
-                    final CodewordsKey key = new CodewordsKey(
-                        Integer.parseInt(m.group(VERSION_GROUP)),
-                        ErrorCorrectionLevel.valueOf(m.group(LEVEL_GROUP)));
-
-                    CODEWORDS_MAP.put(key, Integer.parseInt(m.group(VALUE_GROUP)));
-                });
-        }
-        catch (final IOException error)
-        {
-            throw new UncheckedIOException(error);
-        }
     }
 
     // endregion

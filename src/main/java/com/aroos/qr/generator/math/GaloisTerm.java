@@ -1,13 +1,7 @@
 package com.aroos.qr.generator.math;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
-
-import com.aroos.qr.generator.common.ResourceReader;
 
 /*
  * The {@link GaloisTerm} class implements a polynomial term which performs 
@@ -20,38 +14,6 @@ import com.aroos.qr.generator.common.ResourceReader;
  */
 public final class GaloisTerm implements ITerm
 {
-    ////////////////////////////////////////////////////////////////////////////
-    // region Log/antilogs
-    ////////////////////////////////////////////////////////////////////////////
-    
-    // Use when going from exponent -> integer
-    private static final Map<Integer, Integer> LOGS = new HashMap<>();
-
-    // Use when going from integer -> exponenet
-    private static final Map<Integer, Integer> ANTILOGS = new HashMap<>();
-
-    private static final Pattern LOG_ENTRY = Pattern.compile("(\\d+):(\\d+)");
-
-    static
-    {
-        final String logs = ResourceReader.read("logs.txt");
-        final String antilogs = ResourceReader.read("antilogs.txt");
-
-        logs.lines()
-            .map(LOG_ENTRY::matcher)
-            .filter(Matcher::find)
-            .forEach(m -> LOGS.put(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))));
-            
-        antilogs.lines()
-            .map(LOG_ENTRY::matcher)
-            .filter(Matcher::find)
-            .forEach(m -> ANTILOGS.put(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))));
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // region GaloisTerm
-    ////////////////////////////////////////////////////////////////////////////
-    
     private final int coefficient;
     private final int exponent;
 
@@ -238,10 +200,10 @@ public final class GaloisTerm implements ITerm
 
     private static int galoisMultiply(final int a, final int b)
     {
-        final int aExp = ANTILOGS.get(a);
-        final int bExp = ANTILOGS.get(b);
+        final int aExp = Galois.antilog(a);
+        final int bExp = Galois.antilog(b);
         final int expSum = (aExp + bExp) % 255;
 
-        return LOGS.get(expSum);
+        return Galois.log(expSum);
     }
 }
