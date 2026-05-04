@@ -39,8 +39,6 @@ public final class ConvertCodewords
                 this.processLine(out, line);
             }
         }
-
-
     }
 
     private void processLine(final FileOutputStream out, final String line)

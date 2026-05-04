@@ -1,19 +1,61 @@
-
 package com.aroos.qr.generator.math;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-/**
- * The {@link AlgebraicTerm} class implements an algebraic polynomial term,
- * operating with standard mathematical functions.
+import com.aroos.qr.generator.common.ResourceReader;
+
+/*
+ * The {@link GaloisTerm} class implements a polynomial term which performs 
+ * operations under a Galois field, specifically using bit-wise modulo 2 
+ * arithmetic, and byte-wise modulo 100011101 (285 in decimal) arithmetic. 
+ * Within this field, all addition and subtraction is performed using the XOR
+ * operator, and no number can go beyond what can be represented with an 8-bit
+ * byte (255 in decimal). If one does as a result of an operation, it must then
+ * be XORed with 285.
  */
-public final class AlgebraicTerm implements ITerm
+public final class GaloisTerm implements ITerm
 {
-    private final double coefficient;
+    ////////////////////////////////////////////////////////////////////////////
+    // region Log/antilogs
+    ////////////////////////////////////////////////////////////////////////////
+    
+    // Use when going from exponent -> integer
+    private static final Map<Integer, Integer> LOGS = new HashMap<>();
+
+    // Use when going from integer -> exponenet
+    private static final Map<Integer, Integer> ANTILOGS = new HashMap<>();
+
+    private static final Pattern LOG_ENTRY = Pattern.compile("(\\d+):(\\d+)");
+
+    static
+    {
+        final String logs = ResourceReader.read("logs.txt");
+        final String antilogs = ResourceReader.read("antilogs.txt");
+
+        logs.lines()
+            .map(LOG_ENTRY::matcher)
+            .filter(Matcher::find)
+            .forEach(m -> LOGS.put(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))));
+            
+        antilogs.lines()
+            .map(LOG_ENTRY::matcher)
+            .filter(Matcher::find)
+            .forEach(m -> ANTILOGS.put(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))));
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // region GaloisTerm
+    ////////////////////////////////////////////////////////////////////////////
+    
+    private final int coefficient;
     private final int exponent;
 
-    public AlgebraicTerm(final double coefficient, final int exponent)
+    public GaloisTerm(final int coefficient, final int exponent)
     {
         this.coefficient = coefficient;
         this.exponent = exponent;
@@ -29,11 +71,7 @@ public final class AlgebraicTerm implements ITerm
     @Override
     public String toString()
     {
-        final String formattedCoefficient = (int)this.coefficient == this.coefficient
-            ? "%d".formatted((int)this.coefficient)
-            : "%.2f".formatted(this.coefficient);
-
-        return "%sx^%d".formatted(formattedCoefficient, this.exponent);
+        return "%dx^%d".formatted(this.coefficient, this.exponent);
     }
 
     /**
@@ -42,7 +80,7 @@ public final class AlgebraicTerm implements ITerm
     @Override
     public boolean equals(final Object obj)
     {
-        return obj instanceof AlgebraicTerm term &&
+        return obj instanceof GaloisTerm term &&
             term.coefficient == this.coefficient &&
             term.exponent == this.exponent;
     }
@@ -56,6 +94,7 @@ public final class AlgebraicTerm implements ITerm
         return Objects.hash(this.coefficient, this.exponent);
     }
 
+
     ////////////////////////////////////////////////////////////////////////////
     // region Comparable
     ////////////////////////////////////////////////////////////////////////////
@@ -67,7 +106,7 @@ public final class AlgebraicTerm implements ITerm
     public int compareTo(ITerm other)
     {
         return Stream.of(
-            Double.compare(other.getExponent(), this.getExponent()),
+            Integer.compare(other.getExponent(), this.getExponent()),
             Double.compare(other.getCoefficient(), this.getCoefficient()))
             .takeWhile(result -> result != 0)
             .findAny()
@@ -181,5 +220,19 @@ public final class AlgebraicTerm implements ITerm
         return new AlgebraicTerm(
             this.coefficient + other.getCoefficient(),
             this.exponent);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // region Private helpers
+    ////////////////////////////////////////////////////////////////////////////
+    
+    private static int addCoefficient(final int a, final int b)
+    {
+
+    }
+
+    private static int addExponent(final int a, final int b)
+    {
+
     }
 }
