@@ -133,7 +133,7 @@ public final class Polynomial implements IPolynomial
     @Override
     public IPolynomial plus(IPolynomial other)
     {
-        final Map<Integer, ITerm> cpy = this.getMutableTermCopy();
+        final Map<Integer, ITerm> cpy = mutableCopy(this.terms);
 
         other.getTerms().forEach(t -> addSingleTerm(t, cpy));
 
@@ -146,7 +146,7 @@ public final class Polynomial implements IPolynomial
     @Override
     public IPolynomial minus(IPolynomial other)
     {
-        final Map<Integer, ITerm> cpy = this.getMutableTermCopy();
+        final Map<Integer, ITerm> cpy = mutableCopy(this.terms);
 
         other.getTerms().forEach(t -> subtractSingleTerm(t, cpy));
 
@@ -159,11 +159,10 @@ public final class Polynomial implements IPolynomial
     @Override
     public IPolynomial multipliedBy(IPolynomial other)
     {
-        final Map<Integer, ITerm> cpy = this.getMutableTermCopy();
-
-        other.getTerms().forEach(t -> multiplySingleTerm(t, cpy));
-
-        return fromTermMap(cpy);
+        return new Polynomial(other.getTerms().stream()
+            .flatMap(otherTerm -> this.getTerms().stream()
+                .map(thisTerm -> otherTerm.multipliedBy(thisTerm)))
+            .toList());
     }
 
     /**
@@ -214,11 +213,11 @@ public final class Polynomial implements IPolynomial
     // region Private helpers
     ////////////////////////////////////////////////////////////////////////////
 
-    private Map<Integer, ITerm> getMutableTermCopy()
+    private static Map<Integer, ITerm> mutableCopy(final Map<Integer, ITerm> original)
     {
         final Map<Integer, ITerm> cpy = new HashMap<>();
 
-        cpy.putAll(this.terms);
+        cpy.putAll(original);
 
         return cpy;
     }
@@ -231,17 +230,6 @@ public final class Polynomial implements IPolynomial
     private static void subtractSingleTerm(final ITerm term, final Map<Integer, ITerm> terms)
     {
         terms.merge(term.getExponent(), term.multipliedBy(-1), (t1, t2) -> t1.minus(t2.multipliedBy(-1)));
-    }
-
-    private static void multiplySingleTerm(final ITerm term, final Map<Integer, ITerm> terms)
-    {
-        final List<ITerm> termsCpy = terms.values().stream().toList();
-
-        terms.clear();
-
-        termsCpy.stream()
-            .map(term::multipliedBy)
-            .forEach(t -> addSingleTerm(t, terms));
     }
 
     private static IPolynomial fromTermMap(final Map<Integer, ITerm> terms)
