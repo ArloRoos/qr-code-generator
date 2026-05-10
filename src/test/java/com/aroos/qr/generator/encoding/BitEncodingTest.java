@@ -3,15 +3,13 @@ package com.aroos.qr.generator.encoding;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Instant;
-import java.util.BitSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.testng.annotations.BeforeMethod;
 
+import com.aroos.qr.generator.common.IBitStream;
 import com.aroos.qr.generator.common.QRConfiguration;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
@@ -36,7 +34,7 @@ class BitEncodingTest
             mode);
 
         final IQREncoding encoding = IQREncoding.factory().provide(config);
-        final BitSet result = encoding.encode(content);
+        final IBitStream result = encoding.encode(content);
         final int expectedBits = Capacities.getCodewordCount(config.version(), config.level()) * 8;
 
         try
@@ -89,23 +87,20 @@ class BitEncodingTest
         }
     }
 
-    private void validateSection(final BitSet bits, final String expectedBinary)
+    private void validateSection(final IBitStream bits, final String expectedBinary)
     {
         expectedBinary.chars()
             .mapToObj(codePoint -> (char)codePoint)
             .map(c -> c.equals('1'))
-            .forEach(b -> assertThat(bits.get(COUNTER.getAndIncrement()))
+            .forEach(b -> assertThat(bits.at(COUNTER.getAndIncrement()))
                 .isEqualTo(b));
     }
 
     // region Static Helpers
 
-    private static String toBinaryString(final BitSet bits, final int size)
+    private static String toBinaryString(final IBitStream bits, final int size)
     {
-        return IntStream.range(0, size)
-            .mapToObj(i -> bits.get(i))
-            .map(boolValue -> boolValue ? "1" : "0")
-            .collect(Collectors.joining());
+        return bits.toString().substring(0, size);
     }
 
     private static String toBinaryString(final int value, final int length)

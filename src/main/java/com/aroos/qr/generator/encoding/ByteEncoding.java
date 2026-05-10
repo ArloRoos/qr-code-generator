@@ -23,7 +23,7 @@ public final class ByteEncoding extends QREncoding
     {
         for (final byte b : content.getBytes(StandardCharsets.ISO_8859_1))
         {
-            this.putInt(b, 8);
+            this.bits.putInt(b, 8);
         }
     }
 }

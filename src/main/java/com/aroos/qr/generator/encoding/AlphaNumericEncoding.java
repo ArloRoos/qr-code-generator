@@ -43,7 +43,7 @@ public final class AlphaNumericEncoding extends QREncoding
                     CHARACTER_ENCODING.get(s.charAt(0)) * 45 +
                     CHARACTER_ENCODING.get(s.charAt(1));
 
-                this.putInt(value, 11);
+                this.bits.putInt(value, 11);
             }
             // The original string was an odd length, handle the final character
             // slightly different.
@@ -51,7 +51,7 @@ public final class AlphaNumericEncoding extends QREncoding
             {
                 final int value = CHARACTER_ENCODING.get(s.charAt(0));
 
-                this.putInt(value, 6);
+                this.bits.putInt(value, 6);
             }
         });
     }

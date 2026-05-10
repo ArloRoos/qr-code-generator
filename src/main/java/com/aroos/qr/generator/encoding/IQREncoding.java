@@ -1,7 +1,6 @@
 package com.aroos.qr.generator.encoding;
 
-import java.util.BitSet;
-
+import com.aroos.qr.generator.common.IBitStream;
 import com.aroos.qr.generator.encoding.factory.IQREncodingFactory;
 import com.aroos.qr.generator.encoding.factory.QREncodingFactory;
 
@@ -16,7 +15,7 @@ public interface IQREncoding
      * @param content The content to encode.
      * @return A bit set containing the full data bits of the QR code.
      */
-    BitSet encode(String content);
+    IBitStream encode(String content);
 
     static IQREncodingFactory factory()
     {

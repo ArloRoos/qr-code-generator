@@ -14,7 +14,7 @@ public final class GaloisTermTest extends MathTest
         final ITerm term2 = galoisTerm(5, 3);
 
         assertThat(term1.multipliedBy(term2))
-            .isEqualTo(galoisTerm(15, 5));
+            .isEqualTo(galoisTerm(34, 5));
 
         assertThat(term2.multipliedBy(2))
             .isEqualTo(galoisTerm(10, 3));

@@ -32,17 +32,17 @@ public final class NumericEncoding
             // Has two leading 0s, encode as a 4 bit binary number.
             if (value < 10)
             {
-                this.putInt(value, 4);
+                this.bits.putInt(value, 4);
             }
             // Has one leading 0, encode as a 7 bit binary number.
             else if (value < 100)
             {
-                this.putInt(value, 7);
+                this.bits.putInt(value, 7);
             }
             // No leading 0s, encode as a 10 bit binary number.
             else
             {
-                this.putInt(value, 10);
+                this.bits.putInt(value, 10);
             }
         });
     }
