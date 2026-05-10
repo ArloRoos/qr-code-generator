@@ -1,6 +1,5 @@
 package com.aroos.qr.generator.common;
 
-import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -65,11 +64,19 @@ public final class BitStream implements IBitStream
                 "Current BitStream size %d cannot be divided into 8-bit codewords.".formatted(this.size.get()));
         }
 
-        final List<Byte> codewords = new ArrayList<>();
+        final byte[] bytes = this.bits.toByteArray();
 
-        for (int i = 8; i < this.size.get(); i += 8)
+
+        return IntStream.range(0, bytes.length)
+            .mapToObj(i -> bytes[i])
+
+        for (int i = 0; i < this.size.get() % 8; i++)
         {
-            codewords.add(this.bits.get(i - 8, i).toByteArray()[0]);
+            final byte[] bytes = this.getBits().toByteArray();
+            final BitSet range = this.getBits().get(i, i + 8);
+            final byte b = range.toByteArray()[0];
+
+            codewords.add(b);
         }
 
         return codewords;

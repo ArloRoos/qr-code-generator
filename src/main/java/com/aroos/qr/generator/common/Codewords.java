@@ -1,9 +1,12 @@
 package com.aroos.qr.generator.common;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
@@ -16,7 +19,8 @@ public final class Codewords implements ICodewords
 
     private static final Map<CodewordsKey, CodewordsValue> CODEWORDS_MAP = new HashMap<>();
 
-    private static final Pattern CODEWORDS_REGEX = Pattern.compile("^(?<VERSION>\\d+):(?<LEVEL>[A-Z_]+):(?<VALUE>\\d+)$");
+    private static final Pattern CODEWORDS_REGEX = Pattern.compile(
+        "^(\\d+):([A-Z_]+),CODEWORDS:(\\d+):(\\d+),GROUP1:(\\d+):(\\d+),GROUP2:(\\d+):(\\d+)$");
 
     static
     {
@@ -24,9 +28,17 @@ public final class Codewords implements ICodewords
             "data_codewords.txt",
             CODEWORDS_REGEX,
             match -> new CodewordsKey(
-                Integer.parseInt(match.group(VERSION_GROUP)),
-                ErrorCorrectionLevel.valueOf(match.group(LEVEL_GROUP))),
-            match -> Integer.parseInt(match.group(VALUE_GROUP)),
+                Integer.parseInt(match.group(1)),
+                ErrorCorrectionLevel.valueOf(match.group(2))),
+            match -> new CodewordsValue(
+                Integer.parseInt(match.group(3)),
+                Integer.parseInt(match.group(4)),
+                new Group(
+                    Integer.parseInt(match.group(5)),
+                    Integer.parseInt(match.group(6))),
+                new Group(
+                    Integer.parseInt(match.group(7)),
+                    Integer.parseInt(match.group(8)))),
             CODEWORDS_MAP::put);
     }
 
@@ -58,7 +70,29 @@ public final class Codewords implements ICodewords
     @Override
     public Stream<List<Byte>> getBlocks(final IBitStream bits, final QRConfiguration config)
     {
-        return Stream.of(List.of());
+        final Queue<Byte> codewords = new ArrayDeque<>(bits.getCodewords());
+
+        if (codewords.size() != this.getDataCodewordCount(config))
+        {
+            throw new IllegalArgumentException(String.format(
+                "Failed to generate codeword blocks: BitStream codeword count %d does not match expected codeword count %d",
+                codewords.size(),
+                this.getDataCodewordCount(config)));
+        }
+
+        final CodewordsValue blockInfo = CODEWORDS_MAP.get(fromConfig(config));
+
+        return Stream.concat(
+            IntStream.range(0, blockInfo.group1().blockCount())
+                .mapToObj(i -> IntStream.range(0, blockInfo.group1().codewordsPerBlock())
+                    .mapToObj(j -> codewords.remove())
+                    .toList()),
+            blockInfo.group2().blockCount() > 0
+                ? IntStream.range(0, blockInfo.group2().blockCount())
+                    .mapToObj(i -> IntStream.range(0, blockInfo.group2().codewordsPerBlock())
+                        .mapToObj(j -> codewords.remove())
+                        .toList())
+                : Stream.of());
     }
 
     ////////////////////////////////////////////////////////////////////////////

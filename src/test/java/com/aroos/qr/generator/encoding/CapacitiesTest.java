@@ -36,24 +36,6 @@ public final class CapacitiesTest
             .isEqualTo(expectedVersion);
     }
 
-    @DataProvider
-    public Object[][] codewordsTestCases()
-    {
-        return Stream.of(
-            new Object[] { ErrorCorrectionLevel.LEVEL_L, 1, 19},
-            new Object[] { ErrorCorrectionLevel.LEVEL_M, 4, 64},
-            new Object[] { ErrorCorrectionLevel.LEVEL_Q, 5, 62},
-            new Object[] { ErrorCorrectionLevel.LEVEL_H, 40, 1276})
-            .toArray(Object[][]::new);
-    }
-
-    @Test(dataProvider = "codewordsTestCases")
-    public void codewordsTest(final ErrorCorrectionLevel level, final int version, final int expectedCodewords)
-    {
-        assertThat(Capacities.getCodewordCount(version, level))
-            .isEqualTo(expectedCodewords);
-    }
-
     @Test
     public void tooLargeTest()
     {

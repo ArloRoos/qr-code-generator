@@ -9,7 +9,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.testng.annotations.BeforeMethod;
 
+import com.aroos.qr.generator.common.Codewords;
 import com.aroos.qr.generator.common.IBitStream;
+import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.QRConfiguration;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
@@ -19,6 +21,7 @@ class BitEncodingTest
 
     private static final Random RANDOM = new Random(Instant.now().getEpochSecond());
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
+    private static final ICodewords CODEWORDS = new Codewords();
 
     @BeforeMethod
     public void reset()
@@ -35,7 +38,7 @@ class BitEncodingTest
 
         final IQREncoding encoding = IQREncoding.factory().provide(config);
         final IBitStream result = encoding.encode(content);
-        final int expectedBits = Capacities.getCodewordCount(config.version(), config.level()) * 8;
+        final int expectedBits = CODEWORDS.getDataCodewordCount(config) * 8;
 
         try
         {
