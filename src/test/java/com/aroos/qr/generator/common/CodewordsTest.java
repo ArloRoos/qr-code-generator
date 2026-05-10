@@ -91,7 +91,7 @@ public final class CodewordsTest
             .toList();
 
         assertThat(blocks)
-            .hasSameSizeAs(expectedBlocks);
+            .hasSameSizeAs(expectedSizes);
 
         for (int i = 0; i < blocks.size(); i++)
         {

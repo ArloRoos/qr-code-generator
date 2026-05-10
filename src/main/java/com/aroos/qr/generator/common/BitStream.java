@@ -66,20 +66,11 @@ public final class BitStream implements IBitStream
 
         final byte[] bytes = this.bits.toByteArray();
 
-
         return IntStream.range(0, bytes.length)
             .mapToObj(i -> bytes[i])
-
-        for (int i = 0; i < this.size.get() % 8; i++)
-        {
-            final byte[] bytes = this.getBits().toByteArray();
-            final BitSet range = this.getBits().get(i, i + 8);
-            final byte b = range.toByteArray()[0];
-
-            codewords.add(b);
-        }
-
-        return codewords;
+            // Little bit of wizardry to reverse the byte value.
+            .map(b -> (byte)(Integer.reverse(b & 0xFF) >>> 24))
+            .toList();
     }
 
     /**
