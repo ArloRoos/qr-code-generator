@@ -2,8 +2,10 @@ package com.aroos.qr.generator.encoding.factory;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
+import com.aroos.qr.generator.common.Codewords;
+import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.QRConfiguration;
 import com.aroos.qr.generator.encoding.AlphaNumericEncoding;
 import com.aroos.qr.generator.encoding.ByteEncoding;
@@ -17,7 +19,7 @@ import com.aroos.qr.generator.encoding.NumericEncoding;
  */
 public final class QREncodingFactory implements IQREncodingFactory
 {
-    private static final Map<EncodingMode, Function<QRConfiguration, IQREncoding>> CONSTRUCTORS = Map.of(
+    private static final Map<EncodingMode, BiFunction<QRConfiguration, ICodewords, IQREncoding>> CONSTRUCTORS = Map.of(
         EncodingMode.ALPHANUMERIC, AlphaNumericEncoding::new,
         EncodingMode.BYTE, ByteEncoding::new,
         EncodingMode.NUMERIC, NumericEncoding::new);
@@ -29,7 +31,7 @@ public final class QREncodingFactory implements IQREncodingFactory
     public IQREncoding provide(final QRConfiguration config)
     {
         return Optional.ofNullable(CONSTRUCTORS.get(config.mode()))
-            .map(f -> f.apply(config))
+            .map(f -> f.apply(config, new Codewords()))
             .orElseThrow(() -> new IllegalArgumentException(String.format(
                 "No encoding strategy found for encoding mode %s",
                 config.mode().name())));

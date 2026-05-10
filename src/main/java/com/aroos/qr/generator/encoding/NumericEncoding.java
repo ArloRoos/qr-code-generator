@@ -1,5 +1,7 @@
 package com.aroos.qr.generator.encoding;
 
+import com.aroos.qr.generator.common.CollectionUtils;
+import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.QRConfiguration;
 
 /**
@@ -11,9 +13,9 @@ public final class NumericEncoding
 {
     private static final int PARTITION_SIZE = 3;
 
-    public NumericEncoding(final QRConfiguration config)
+    public NumericEncoding(final QRConfiguration config, final ICodewords codewords)
     {
-        super(config);
+        super(config, codewords);
     }
 
     /**
@@ -22,7 +24,7 @@ public final class NumericEncoding
     @Override
     protected void encodeContent(final String content)
     {
-        this.partition(content, PARTITION_SIZE).forEach(s ->
+        CollectionUtils.partition(content, PARTITION_SIZE).forEach(s ->
         {
             // Note that for all encoding methods, string validity is checked at
             // the factory level, meaning we can assume all characters in the

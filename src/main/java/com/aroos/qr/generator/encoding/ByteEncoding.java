@@ -2,6 +2,7 @@ package com.aroos.qr.generator.encoding;
 
 import java.nio.charset.StandardCharsets;
 
+import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.QRConfiguration;
 
 /**
@@ -10,9 +11,9 @@ import com.aroos.qr.generator.common.QRConfiguration;
  */
 public final class ByteEncoding extends QREncoding
 {
-    public ByteEncoding(final QRConfiguration config)
+    public ByteEncoding(final QRConfiguration config, final ICodewords codewords)
     {
-        super(config);
+        super(config, codewords);
     }
 
     /**

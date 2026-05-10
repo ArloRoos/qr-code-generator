@@ -3,6 +3,8 @@ package com.aroos.qr.generator.encoding;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.aroos.qr.generator.common.CollectionUtils;
+import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.LookupTables;
 import com.aroos.qr.generator.common.QRConfiguration;
 
@@ -24,9 +26,9 @@ public final class AlphaNumericEncoding extends QREncoding
             CHARACTER_ENCODING::put);
     }
 
-    public AlphaNumericEncoding(final QRConfiguration config)
+    public AlphaNumericEncoding(final QRConfiguration config, final ICodewords codewords)
     {
-        super(config);
+        super(config, codewords);
     }
 
     /**
@@ -35,7 +37,7 @@ public final class AlphaNumericEncoding extends QREncoding
     @Override
     protected void encodeContent(final String content)
     {
-        this.partition(content, PARTITION_SIZE).forEach(s ->
+        CollectionUtils.partition(content, PARTITION_SIZE).forEach(s ->
         {
             if (s.length() == 2)
             {

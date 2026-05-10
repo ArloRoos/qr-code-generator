@@ -1,10 +1,8 @@
 package com.aroos.qr.generator.encoding;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.aroos.qr.generator.common.BitStream;
 import com.aroos.qr.generator.common.IBitStream;
+import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.QRConfiguration;
 
 /**
@@ -23,11 +21,11 @@ abstract class QREncoding implements IQREncoding
 
     private final int requiredBits;
 
-    protected QREncoding(final QRConfiguration config)
+    protected QREncoding(final QRConfiguration config, final ICodewords codewords)
     {
         this.config = config;
         this.bits = new BitStream();
-        this.requiredBits = Capacities.getCodewordCount(config.version(), config.level()) * 8;
+        this.requiredBits = codewords.getDataCodewordCount(config) * 8;
     }
 
     /**
@@ -50,24 +48,6 @@ abstract class QREncoding implements IQREncoding
      * @param content The content to encode.
      */
     protected abstract void encodeContent(final String content);
-
-    /**
-     * Partition the given string into a list of substrings with the given size.
-     * @param content The content to partition.
-     * @param partitionSize The size of each partition.
-     * @return The partitions of the original string.
-     */
-    protected final Collection<String> partition(final String content, final int partitionSize)
-    {
-        final Collection<String> parts = new ArrayList<>();
-
-        for (int i = 0; i < content.length(); i += partitionSize)
-        {
-            parts.add(content.substring(i, Math.min(content.length(), i + partitionSize)));
-        }
-
-        return parts;
-    }
 
     private void putMode()
     {
