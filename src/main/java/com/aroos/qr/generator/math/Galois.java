@@ -18,7 +18,7 @@ public final class Galois
     // Use when going from integer -> exponenet
     private static final Map<Integer, Integer> ANTILOGS = new HashMap<>();
 
-    private static final Pattern LOG_ENTRY = Pattern.compile("(\\d+):(\\d+)");
+    private static final Pattern LOG_ENTRY = Pattern.compile("(\\d+)\\:(\\d+)");
 
     static
     {
@@ -38,7 +38,8 @@ public final class Galois
     }
 
     /**
-     * Computes the log of the given value in GF(255).
+     * Computes the log of the given value in GF(255). Use when going from
+     * exponent -> integer.
      * @param value The exponent.
      * @return The base.
      */
@@ -48,12 +49,13 @@ public final class Galois
     }
 
     /**
-     * Computes the antilog of the given value in GF(255).
+     * Computes the antilog of the given value in GF(255). Use when going from
+     * integer -> exponent.
      * @param value The base.
      * @return The exponent.
      */
     public static int antilog(final int value)
     {
-        return LOGS.get(value);
+        return ANTILOGS.get(value);
     }
 }

@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UncheckedIOException;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,8 +26,14 @@ public final class LookupTables
     {
         fillTable(
             resource,
-            line -> keyMapper.apply(lineRegex.matcher(line)),
-            line -> valueMapper.apply(lineRegex.matcher(line)),
+            line -> Optional.of(lineRegex.matcher(line))
+                .filter(Matcher::matches)
+                .map(keyMapper)
+                .orElseThrow(noMatch(line, resource)),
+            line -> Optional.of(lineRegex.matcher(line))
+                .filter(Matcher::matches)
+                .map(valueMapper)
+                .orElseThrow(noMatch(line, resource)),
             populator);
     }
 
@@ -54,5 +62,11 @@ public final class LookupTables
         {
             throw new UncheckedIOException(error);
         }
+    }
+
+    private static Supplier<RuntimeException> noMatch(final String line, final String file)
+    {
+        return () -> new RuntimeException(
+            "Could not find a matcher for line [%s] while generating lookup table from [%s]".formatted(line, file));
     }
 }

@@ -151,7 +151,7 @@ public final class GaloisTerm implements ITerm
     public ITerm multipliedBy(final ITerm other)
     {
         return new GaloisTerm(
-            galoisAdd(this.coefficient, (int)other.getCoefficient()),
+            galoisMultiply(this.coefficient, (int)other.getCoefficient()),
             this.exponent + other.getExponent());
     }
 

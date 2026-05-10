@@ -24,8 +24,8 @@ public final class PolynomialTest extends MathTest
     @Test(dataProvider = "additionTestCases")
     public void addTest(final String p1, final String p2, final String expectedSum)
     {
-        assertThat(poly(p1).plus(poly(p2)))
-            .isEqualTo(poly(expectedSum));
+        assertThat(IPolynomial.from(p1).plus(IPolynomial.from(p2)))
+            .isEqualTo(IPolynomial.from(expectedSum));
     }
 
     @DataProvider
@@ -41,8 +41,8 @@ public final class PolynomialTest extends MathTest
     @Test(dataProvider = "subtractionTestCases")
     public void subtractionTest(final String p1, final String p2, final String expectedDifference)
     {
-        assertThat(poly(p1).minus(poly(p2)))
-            .isEqualTo(poly(expectedDifference));
+        assertThat(IPolynomial.from(p1).minus(IPolynomial.from(p2)))
+            .isEqualTo(IPolynomial.from(expectedDifference));
     }
 
     @DataProvider
@@ -59,8 +59,8 @@ public final class PolynomialTest extends MathTest
     @Test(dataProvider = "multiplicationTestCases")
     public void multiplicationTest(final String p1, final String p2, final String expectedProduct)
     {
-        assertThat(poly(p1).multipliedBy(poly(p2)))
-            .isEqualTo(poly(expectedProduct));
+        assertThat(IPolynomial.from(p1).multipliedBy(IPolynomial.from(p2)))
+            .isEqualTo(IPolynomial.from(expectedProduct));
     }
 
     @DataProvider
@@ -79,12 +79,12 @@ public final class PolynomialTest extends MathTest
         final String expectedQuotient,
         final String expectedRemainder)
     {
-        final IQuotient quotient = poly(dividend).dividedByExact(poly(divisor));
+        final IQuotient quotient = IPolynomial.from(dividend).dividedByExact(IPolynomial.from(divisor));
 
         assertThat(quotient.getQuotient())
-            .isEqualTo(poly(expectedQuotient));
+            .isEqualTo(IPolynomial.from(expectedQuotient));
 
         assertThat(quotient.getRemainder())
-            .isEqualTo(poly(expectedRemainder));
+            .isEqualTo(IPolynomial.from(expectedRemainder));
     }
 }
