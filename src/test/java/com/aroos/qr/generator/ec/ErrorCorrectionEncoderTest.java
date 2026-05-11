@@ -1,0 +1,100 @@
+package com.aroos.qr.generator.ec;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.testng.annotations.Test;
+
+import com.aroos.qr.generator.common.BitStream;
+import com.aroos.qr.generator.common.Codewords;
+import com.aroos.qr.generator.common.IBitStream;
+import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.encoding.EncodingMode;
+
+public final class ErrorCorrectionEncoderTest
+{
+    private static String EXPECTED = "0100001111110110101101100100011001010101111101101110011011110111010001100100001011110111011101101000011000000111011101110101011001010111011101100011001011000010001001101000011000000111000001100101010111110010011101101001011111000010000001111000011000110010011101110010011001010111111000000011001001010110001001101110110000000110000101100101001000010001000100101100011000000110111011000000011011000111100001100001000101100111100100101001011111101100001001100000011000110010000100010000011111101100110101010101011110010100100011001100011111001100011101000110010000001011011000001011000111111010001011010011110011010100111101110111001111001010010011000110110011110111101101101000010110000011111100010111110001001011001001011101111110011101111100100110100011100101110010001110111011111101111110001000011001001100011100011001101000011011110000110110111101110101100000011110011011101011100110101101000110111101110001010110111100010001000010100101001101010110101000110110110000000110101000011010001111110000110011010110111101111000110000000101100100100111100001011000110101001010";
+
+    private static byte[] CODEWORDS = new byte[] {
+        0b01000011,
+        0b01010101,
+        0b01000110,
+        (byte)0b10000110,
+        0b01010111,
+        0b00100110,
+        0b01010101,
+        (byte)0b11000010,
+        0b01110111,
+        0b00110010,
+        0b00000110,
+        0b00010010,
+        0b00000110,
+        0b01100111,
+        0b00100110,
+        (byte)0b11110110,
+        (byte)0b11110110,
+        0b01000010,
+        0b00000111,
+        0b01110110,
+        (byte)0b10000110,
+        (byte)0b11110010,
+        0b00000111,
+        0b00100110,
+        0b01010110,
+        0b00010110,
+        (byte)0b11000110,
+        (byte)0b11000111,
+        (byte)0b10010010,
+        0b00000110,
+        (byte)0b10110110,
+        (byte)0b11100110,
+        (byte)0b11110111,
+        0b01110111,
+        0b00110010,
+        0b00000111,
+        0b01110110,
+        (byte)0b10000110,
+        0b01010111,
+        0b00100110,
+        0b01010010,
+        0b00000110,
+        (byte)0b10000110,
+        (byte)0b10010111,
+        0b00110010,
+        0b00000111,
+        0b01000110,
+        (byte)0b11110111,
+        0b01110110,
+        0b01010110,
+        (byte)0b11000010,
+        0b00000110,
+        (byte)0b10010111,
+        0b00110010,
+        (byte)0b11100000,
+        (byte)0b11101100,
+        0b00010001,
+        (byte)0b11101100,
+        0b00010001,
+        (byte)0b11101100,
+        0b00010001,
+        (byte)0b11101100
+    };
+
+    @Test
+    public void ecCodewordsTest()
+    {
+        final IBitStream testMessage = new BitStream();
+        final QRConfiguration config = new QRConfiguration(5, ErrorCorrectionLevel.LEVEL_Q, EncodingMode.BYTE);
+
+        for (final byte b : CODEWORDS)
+        {
+            testMessage.putByte(b);
+        }
+
+        final IErrorCorrectionEncoder encoder = new ErrorCorrectionEncoder(new Codewords());
+        
+        final IBitStream result = encoder.encode(testMessage, config);
+
+        assertThat(result.toString())
+            .isEqualTo(EXPECTED);
+    }    
+}

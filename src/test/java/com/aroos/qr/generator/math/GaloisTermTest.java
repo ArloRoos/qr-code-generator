@@ -23,11 +23,11 @@ public final class GaloisTermTest extends MathTest
     @Test
     public void divideTest()
     {
-        final ITerm term1 = galoisTerm(10, 2);
-        final ITerm term2 = galoisTerm(5, 3);
+        final ITerm term1 = galoisTerm(10, 3);
+        final ITerm term2 = galoisTerm(5, 2);
 
         assertThat(term1.dividedBy(term2))
-            .isEqualTo(galoisTerm(10, 0));
+            .isEqualTo(galoisTerm(10, 1));
     }
 
     @Test

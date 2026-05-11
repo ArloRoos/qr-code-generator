@@ -112,7 +112,9 @@ public final class GaloisTerm implements ITerm
     @Override
     public ITerm multipliedBy(final double scalar)
     {
-        return new GaloisTerm(galoisMultiply(this.coefficient, (int)scalar), this.exponent);
+        return new GaloisTerm(
+            galoisMultiply(this.coefficient, scalar < 0 ? Math.abs((int)scalar) : (int)scalar), 
+            this.exponent);
     }
 
     /**
@@ -134,14 +136,9 @@ public final class GaloisTerm implements ITerm
     @Override
     public ITerm dividedBy(final ITerm other)
     {
-        // This is a special case, since it's only used in polynomial division.
-        // Generic division isn't necessarily defined in a Galois field, so the
-        // result is simply the thing that I'd want to multiply the generator
-        // polynomial by during long division. In this case that's just the 
-        // coefficient of this term.
         return new GaloisTerm(
             this.coefficient,
-            0);
+            this.exponent - other.getExponent());
     }
 
     /**

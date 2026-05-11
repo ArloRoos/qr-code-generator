@@ -97,7 +97,7 @@ public final class BitStream implements IBitStream
     @Override
     public void putByte(final byte value)
     {
-        this.putInt((int)value, Byte.BYTES);
+        this.putInt((int)value, 8);
     }
 
     /**
