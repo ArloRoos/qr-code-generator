@@ -1,4 +1,4 @@
-package com.aroos.qr.generator.common;
+package com.aroos.qr.generator.common.util;
 
 import java.util.ArrayList;
 import java.util.Collection;

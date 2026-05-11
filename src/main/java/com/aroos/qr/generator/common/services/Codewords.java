@@ -1,4 +1,4 @@
-package com.aroos.qr.generator.common;
+package com.aroos.qr.generator.common.services;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -9,6 +9,9 @@ import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.aroos.qr.generator.common.IBitStream;
+import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.common.util.LookupTables;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
 public final class Codewords implements ICodewords

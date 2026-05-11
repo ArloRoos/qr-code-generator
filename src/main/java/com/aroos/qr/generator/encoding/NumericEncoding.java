@@ -1,8 +1,8 @@
 package com.aroos.qr.generator.encoding;
 
-import com.aroos.qr.generator.common.CollectionUtils;
-import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.common.services.ICodewords;
+import com.aroos.qr.generator.common.util.CollectionUtils;
 
 /**
  * The {@link NumericEncoding} class implements behavior for a strategy that 

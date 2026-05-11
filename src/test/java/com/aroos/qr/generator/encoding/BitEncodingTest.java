@@ -9,10 +9,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.testng.annotations.BeforeMethod;
 
-import com.aroos.qr.generator.common.Codewords;
 import com.aroos.qr.generator.common.IBitStream;
-import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.common.services.Codewords;
+import com.aroos.qr.generator.common.services.ICodewords;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
 class BitEncodingTest

@@ -2,8 +2,8 @@ package com.aroos.qr.generator.encoding;
 
 import java.nio.charset.StandardCharsets;
 
-import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.common.services.ICodewords;
 
 /**
  * The {@link ByteEncoding} class implements behavior for a strategy that

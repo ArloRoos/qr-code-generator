@@ -10,8 +10,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.aroos.qr.generator.common.Codewords;
 import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.common.services.Codewords;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
 public final class AlphaNumericEncodingTest extends BitEncodingTest

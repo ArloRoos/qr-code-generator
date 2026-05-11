@@ -1,4 +1,4 @@
-package com.aroos.qr.generator.common;
+package com.aroos.qr.generator.common.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

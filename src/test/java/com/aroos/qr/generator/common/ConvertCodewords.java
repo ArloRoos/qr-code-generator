@@ -8,6 +8,7 @@ import java.nio.file.Path;
 
 import org.testng.annotations.Test;
 
+import com.aroos.qr.generator.common.util.ResourceReader;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
 public final class ConvertCodewords

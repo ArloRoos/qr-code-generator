@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.aroos.qr.generator.common.util.LookupTables;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 
 public final class CodewordsMirror

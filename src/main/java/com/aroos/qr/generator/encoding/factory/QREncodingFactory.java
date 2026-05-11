@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-import com.aroos.qr.generator.common.Codewords;
-import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.common.services.Codewords;
+import com.aroos.qr.generator.common.services.ICodewords;
 import com.aroos.qr.generator.encoding.AlphaNumericEncoding;
 import com.aroos.qr.generator.encoding.ByteEncoding;
 import com.aroos.qr.generator.encoding.EncodingMode;

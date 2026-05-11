@@ -12,6 +12,8 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.aroos.qr.generator.common.CodewordsMirror.CodewordsValue;
+import com.aroos.qr.generator.common.services.Codewords;
+import com.aroos.qr.generator.common.services.ICodewords;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
 import com.aroos.qr.generator.encoding.EncodingMode;
 

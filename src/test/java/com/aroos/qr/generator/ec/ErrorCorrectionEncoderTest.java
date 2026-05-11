@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.testng.annotations.Test;
 
 import com.aroos.qr.generator.common.BitStream;
-import com.aroos.qr.generator.common.Codewords;
 import com.aroos.qr.generator.common.IBitStream;
 import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.common.services.Codewords;
 import com.aroos.qr.generator.encoding.EncodingMode;
 
 public final class ErrorCorrectionEncoderTest

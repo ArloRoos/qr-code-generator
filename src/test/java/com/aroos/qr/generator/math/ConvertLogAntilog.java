@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.testng.annotations.Test;
 
-import com.aroos.qr.generator.common.ResourceReader;
+import com.aroos.qr.generator.common.util.ResourceReader;
 
 public final class ConvertLogAntilog
 {

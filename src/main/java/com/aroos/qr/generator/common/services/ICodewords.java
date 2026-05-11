@@ -1,7 +1,10 @@
-package com.aroos.qr.generator.common;
+package com.aroos.qr.generator.common.services;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import com.aroos.qr.generator.common.IBitStream;
+import com.aroos.qr.generator.common.QRConfiguration;
 
 /**
  * The {@link ICodewords} interface defines behavior for a service providing

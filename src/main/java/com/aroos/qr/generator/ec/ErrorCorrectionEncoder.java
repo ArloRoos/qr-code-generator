@@ -9,8 +9,8 @@ import java.util.function.Consumer;
 
 import com.aroos.qr.generator.common.BitStream;
 import com.aroos.qr.generator.common.IBitStream;
-import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.common.services.ICodewords;
 import com.aroos.qr.generator.math.GaloisTerm;
 import com.aroos.qr.generator.math.IPolynomial;
 import com.aroos.qr.generator.math.ITerm;

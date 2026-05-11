@@ -2,8 +2,8 @@ package com.aroos.qr.generator.encoding;
 
 import com.aroos.qr.generator.common.BitStream;
 import com.aroos.qr.generator.common.IBitStream;
-import com.aroos.qr.generator.common.ICodewords;
 import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.common.services.ICodewords;
 
 /**
  * The {@link QREncoding} class implements a base class containing common
