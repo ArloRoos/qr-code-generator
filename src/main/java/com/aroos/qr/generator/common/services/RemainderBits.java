@@ -15,7 +15,7 @@ import com.aroos.qr.generator.common.util.LookupTables;
 public final class RemainderBits implements IRemainderBits
 {   
     private static Map<Integer, Integer> REMAINDER_BITS = new HashMap<>();
-    private static Pattern REMAINDER_BITS_PATTERN = Pattern.compile("(\\d):(\\d)"); 
+    private static Pattern REMAINDER_BITS_PATTERN = Pattern.compile("(\\d+):(\\d+)"); 
 
     static
     {

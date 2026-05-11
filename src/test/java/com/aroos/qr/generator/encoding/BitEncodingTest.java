@@ -36,6 +36,15 @@ class BitEncodingTest
             randomErrorCorrection(),
             mode);
 
+        // Since I'm randomly generating version/error correction levels, there
+        // is a case where the given content string is impossible. Since I run
+        // all the encoding tests over several iterations, I just skip this 
+        // case.
+        if (Capacities.getSmallestVersion(content.length(), config.mode(), config.level()) > config.version())
+        {
+            return;
+        }
+
         final IQREncoding encoding = IQREncoding.factory().provide(config);
         final IBitStream result = encoding.encode(content);
         final int expectedBits = CODEWORDS.getDataCodewordCount(config) * 8;
@@ -122,7 +131,7 @@ class BitEncodingTest
 
     private static int randomVersion()
     {
-        return RANDOM.nextInt(40) + 1;
+        return RANDOM.nextInt(1,41);
     }
 
     private static ErrorCorrectionLevel randomErrorCorrection()
