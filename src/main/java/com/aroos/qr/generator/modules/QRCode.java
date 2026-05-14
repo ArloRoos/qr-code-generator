@@ -134,7 +134,9 @@ final class QRCode implements IQRCode
 
     private void setModule(final int x, final int y, final Module module)
     {
-        if (this.isReserved(x, y))
+        // If you're setting a reserved module, you can always override a
+        // previously reserved module. Otherwise, throw the exception.
+        if (this.isReserved(x, y) && !module.isReserved())
         {
             throw reservedModule(x, y);
         }
