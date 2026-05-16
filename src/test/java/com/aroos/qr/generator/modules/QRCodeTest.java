@@ -8,6 +8,7 @@ import com.aroos.qr.generator.encoding.EncodingMode;
 import com.aroos.qr.generator.modules.patterns.AlignmentPattern;
 import com.aroos.qr.generator.modules.patterns.FinderPattern;
 import com.aroos.qr.generator.modules.patterns.IModulePattern;
+import com.aroos.qr.generator.modules.patterns.TimingPattern;
 import com.aroos.qr.generator.png.IPNGImage;
 import com.aroos.qr.generator.png.PNGWriter;
 
@@ -16,13 +17,15 @@ public final class QRCodeTest
     @Test
     public void toPNGTest()
     {
-        final QRConfiguration config = new QRConfiguration(8, ErrorCorrectionLevel.LEVEL_H, EncodingMode.BYTE);
+        final QRConfiguration config = new QRConfiguration(2, ErrorCorrectionLevel.LEVEL_H, EncodingMode.BYTE);
         final IQRCode code = new QRCode(config);
         final IModulePattern finder = new FinderPattern();
         final IModulePattern alignment = new AlignmentPattern();
+        final IModulePattern timing = new TimingPattern();
 
         finder.accept(code);
         alignment.accept(code);
+        timing.accept(code);
 
         final IPNGImage image = code.toPNG(5);
 

@@ -30,7 +30,7 @@ final class QRCode implements IQRCode
 
             for (int j = 0; j < this.size; j++)
             {
-                this.modules.get(i).add(new Module(false, false));
+                this.modules.get(i).add(new Module(false, false, false));
             }
         }
     }
@@ -76,7 +76,7 @@ final class QRCode implements IQRCode
     {
         checkBounds(x, y);
 
-        this.setModule(x, y, new Module(value, true));
+        this.setModule(x, y, new Module(value, true, true));
     }
 
     /**
@@ -87,7 +87,7 @@ final class QRCode implements IQRCode
     {
         checkBounds(x, y);
         
-        this.setModule(x, y, new Module(value, true));
+        this.setModule(x, y, new Module(value, true, true));
     }
 
     /**
@@ -171,13 +171,15 @@ final class QRCode implements IQRCode
     // region Private types
     ////////////////////////////////////////////////////////////////////////////
 
-    private static record Module(boolean value, boolean isReserved)
+    private static record Module(boolean value, boolean isReserved, boolean set)
     {
         public IColor toColor()
         {
-            return value
-                ? new Grayscale(0, 255)
-                : new Grayscale(255, 255);
+            return set
+                ? value
+                    ? new Grayscale(0, 255)
+                    : new Grayscale(255, 255)
+                : new Grayscale(100, 255);
         }
     }
 }
