@@ -30,6 +30,12 @@ public interface IBitStream
     List<Byte> getCodewords();
 
     /**
+     * Gets the individual bits of this bit stream.
+     * @return A list of bits.
+     */
+    List<Boolean> getBitList();
+
+    /**
      * Gets the bit at the given index.
      * @param index The index.
      * @return The boolean bit value at the given index.

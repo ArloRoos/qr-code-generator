@@ -148,12 +148,16 @@ final class QRCode implements IQRCode
     {
         if (x < 0 || x >= this.size)
         {
-            throw new IllegalArgumentException("x coordinate out of bounds: [given: %d, size: %d]".formatted(x));
+            throw new IllegalArgumentException("x coordinate out of bounds: [given: %d, size: %d]".formatted(
+                x,
+                this.size));
         }
         
         if (y < 0 || y >= this.size)
         {
-            throw new IllegalArgumentException("y coordinate out of bounds: [given: %d, size: %d]".formatted(x));
+            throw new IllegalArgumentException("y coordinate out of bounds: [given: %d, size: %d]".formatted(
+                y,
+                this.size));
         }
     }
 

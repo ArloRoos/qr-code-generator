@@ -77,6 +77,17 @@ public final class BitStream implements IBitStream
      * {@inheritDoc}
      */
     @Override
+    public List<Boolean> getBitList()
+    {
+        return IntStream.range(0, this.getSize())
+            .mapToObj(this::at)
+            .toList();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public int getSize()
     {
         return this.size.get();
