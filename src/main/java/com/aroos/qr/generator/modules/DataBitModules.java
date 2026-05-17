@@ -85,6 +85,13 @@ public final class DataBitModules implements IDataBitModules
             {
                 this.currentX.incrementAndGet();
             }
+
+            // If we're still out of bounds after a column change, it means
+            // we've traversed into negative x coordinates. Throw an error.
+            if (this.outOfBounds())
+            {
+                throw new IllegalArgumentException("Provided bit stream is too large to fit in the given QR code.");
+            }
         }
     }
 

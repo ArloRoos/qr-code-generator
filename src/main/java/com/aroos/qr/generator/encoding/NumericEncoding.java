@@ -8,8 +8,7 @@ import com.aroos.qr.generator.common.util.CollectionUtils;
  * The {@link NumericEncoding} class implements behavior for a strategy that 
  * encodes input strings using the pure numeric encoding scheme.
  */
-public final class NumericEncoding
-    extends QREncoding
+public final class NumericEncoding extends QREncoding
 {
     private static final int PARTITION_SIZE = 3;
 
