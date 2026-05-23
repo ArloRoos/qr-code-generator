@@ -1,6 +1,7 @@
 package com.aroos.qr.generator.modules;
 
-import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.modules.factory.IQRCodeFactory;
+import com.aroos.qr.generator.modules.factory.QRCodeFactory;
 import com.aroos.qr.generator.png.PNGImage;
 
 /*
@@ -23,8 +24,8 @@ public interface IQRCode
 
     PNGImage toPNG(int scaling);
 
-    static IQRCode from(QRConfiguration config)
+    static IQRCodeFactory factory()
     {
-        return new QRCode(config);
+        return new QRCodeFactory();
     }
 }

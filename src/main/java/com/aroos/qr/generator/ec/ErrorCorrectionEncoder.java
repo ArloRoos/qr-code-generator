@@ -1,6 +1,7 @@
 package com.aroos.qr.generator.ec;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
@@ -13,6 +14,7 @@ import com.aroos.qr.generator.common.QRConfiguration;
 import com.aroos.qr.generator.common.services.ICodewords;
 import com.aroos.qr.generator.math.GaloisTerm;
 import com.aroos.qr.generator.math.IPolynomial;
+import com.aroos.qr.generator.math.IPolynomial.IQuotient;
 import com.aroos.qr.generator.math.ITerm;
 import com.aroos.qr.generator.math.Polynomial;
 
@@ -46,11 +48,7 @@ public final class ErrorCorrectionEncoder implements IErrorCorrectionEncoder
         final List<List<Byte>> ecCodewords = dataCodewords.stream()
             .map(block -> getMessagePolynomial(block, ecCodewordCount))
             .map(message -> message.dividedByExact(generator))
-            .map(quotient -> quotient.getRemainder().getTerms().stream()
-                .sorted()
-                .map(t -> t.getCoefficient())
-                .map(c -> (byte)c.intValue())
-                .toList())
+            .map(quotient -> extractCodewords(quotient, ecCodewordCount))
             .toList();
 
         return interleave(dataCodewords, ecCodewords);
@@ -60,6 +58,26 @@ public final class ErrorCorrectionEncoder implements IErrorCorrectionEncoder
     // region Private helpers
     ////////////////////////////////////////////////////////////////////////////
     
+    private static List<Byte> extractCodewords(final IQuotient quotient, final int expectedCodewords)
+    {
+        final List<Byte> result = new ArrayList<>();
+        final List<ITerm> terms = quotient.getRemainder().getTerms();
+
+        for (int i = 0; i < expectedCodewords; i++)
+        {
+            final int exponent = i;
+
+            result.add(terms.stream()
+                .filter(t -> t.getExponent() == exponent)
+                .map(t -> t.getCoefficient())
+                .map(c -> (byte)c.intValue())
+                .findAny()
+                .orElse((byte)0));
+        }
+
+        return result;
+    }
+
     private static IBitStream interleave(final List<List<Byte>> dataCodewords, final List<List<Byte>> ecCodewords)
     {
         final IBitStream result = new BitStream();

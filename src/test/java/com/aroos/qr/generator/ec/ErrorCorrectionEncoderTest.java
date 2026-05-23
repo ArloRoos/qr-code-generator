@@ -2,16 +2,22 @@ package com.aroos.qr.generator.ec;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.Random;
+
 import org.testng.annotations.Test;
 
 import com.aroos.qr.generator.common.BitStream;
 import com.aroos.qr.generator.common.IBitStream;
 import com.aroos.qr.generator.common.QRConfiguration;
 import com.aroos.qr.generator.common.services.Codewords;
+import com.aroos.qr.generator.common.services.ICodewords;
 import com.aroos.qr.generator.encoding.EncodingMode;
 
 public final class ErrorCorrectionEncoderTest
 {
+    private static final Random RANDOM = new Random(Instant.now().getEpochSecond());
     private static String EXPECTED = "0100001111110110101101100100011001010101111101101110011011110111010001100100001011110111011101101000011000000111011101110101011001010111011101100011001011000010001001101000011000000111000001100101010111110010011101101001011111000010000001111000011000110010011101110010011001010111111000000011001001010110001001101110110000000110000101100101001000010001000100101100011000000110111011000000011011000111100001100001000101100111100100101001011111101100001001100000011000110010000100010000011111101100110101010101011110010100100011001100011111001100011101000110010000001011011000001011000111111010001011010011110011010100111101110111001111001010010011000110110011110111101101101000010110000011111100010111110001001011001001011101111110011101111100100110100011100101110010001110111011111101111110001000011001001100011100011001101000011011110000110110111101110101100000011110011011101011100110101101000110111101110001010110111100010001000010100101001101010110101000110110110000000110101000011010001111110000110011010110111101111000110000000101100100100111100001011000110101001010";
 
     private static byte[] CODEWORDS = new byte[] {
@@ -97,4 +103,41 @@ public final class ErrorCorrectionEncoderTest
         assertThat(result.toString())
             .isEqualTo(EXPECTED);
     }    
+
+    @Test(invocationCount = 10)
+    public void codewordCountTest()
+    {
+        final QRConfiguration config = new QRConfiguration(randomVersion(), randomErrorCorrection(), EncodingMode.BYTE);
+        final IBitStream testMessage = new BitStream();
+        final ICodewords codewords = new Codewords();
+        final IErrorCorrectionEncoder encoder = new ErrorCorrectionEncoder(codewords);
+        final int dataCodewords = codewords.getDataCodewordCount(config);
+
+        for (int i = 0; i < dataCodewords; i++)
+        {
+            testMessage.putByte((byte)10);
+        }
+
+        assertThat(testMessage.getCodewords())
+            .hasSize(dataCodewords);
+
+        final List<List<Byte>> blocks = codewords.getBlocks(testMessage, config).toList();
+        final int blockCount = blocks.size();
+        final int ecPerBlock = codewords.getErrorCorrectionCodewordsPerBlock(config);
+        final int ecCodewordCount = blockCount * ecPerBlock;
+        final IBitStream corrected = encoder.encode(testMessage, config);
+
+        assertThat(corrected.getCodewords())
+            .hasSize(dataCodewords + ecCodewordCount);
+    }
+
+    private static int randomVersion()
+    {
+        return RANDOM.nextInt(1,41);
+    }
+
+    private static ErrorCorrectionLevel randomErrorCorrection()
+    {
+        return ErrorCorrectionLevel.values()[RANDOM.nextInt(ErrorCorrectionLevel.values().length)];
+    }
 }

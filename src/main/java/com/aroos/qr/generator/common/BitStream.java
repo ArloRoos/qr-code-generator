@@ -1,6 +1,6 @@
 package com.aroos.qr.generator.common;
 
-import java.util.BitSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -13,14 +13,18 @@ import java.util.stream.IntStream;
  */
 public final class BitStream implements IBitStream
 {
-    private final BitSet bits;
+    private final List<Boolean> bits;
     private final AtomicInteger size;
 
     public BitStream()
     {
-        this.bits = new BitSet();
+        this.bits = new ArrayList<>();
         this.size = new AtomicInteger(0);
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // region IBitStream
+    ////////////////////////////////////////////////////////////////////////////
 
     /**
      * {@inheritDoc}
@@ -47,15 +51,6 @@ public final class BitStream implements IBitStream
      * {@inheritDoc}
      */
     @Override
-    public BitSet getBits()
-    {
-        return this.bits;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public List<Byte> getCodewords()
     {
         if (this.size.get() % 8 != 0)
@@ -64,12 +59,10 @@ public final class BitStream implements IBitStream
                 "Current BitStream size %d cannot be divided into 8-bit codewords.".formatted(this.size.get()));
         }
 
-        final byte[] bytes = this.bits.toByteArray();
+        final byte[] bytes = this.toByteArray();
 
         return IntStream.range(0, bytes.length)
             .mapToObj(i -> bytes[i])
-            // Little bit of wizardry to reverse the byte value.
-            .map(b -> (byte)(Integer.reverse(b & 0xFF) >>> 24))
             .toList();
     }
 
@@ -79,9 +72,7 @@ public final class BitStream implements IBitStream
     @Override
     public List<Boolean> getBitList()
     {
-        return IntStream.range(0, this.getSize())
-            .mapToObj(this::at)
-            .toList();
+        return List.copyOf(this.bits);
     }
 
     /**
@@ -121,7 +112,37 @@ public final class BitStream implements IBitStream
         {
             final boolean bit = ((value >> (length - i - 1)) & 1) == 1;
 
-            this.bits.set(this.size.getAndIncrement(), bit);
+            this.bits.add(bit);
+            this.size.incrementAndGet();
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // region Private Helpers
+    ////////////////////////////////////////////////////////////////////////////
+
+    private byte[] toByteArray()
+    {
+        final int size = this.getSize() / 8;
+        final byte[] bytes = new byte[size];
+
+        for (int i = 0; i < this.getSize(); i += 8)
+        {
+            byte b = 0;
+
+            for (int j = 0; j < 8; j++)
+            {
+                b <<= 1;
+
+                if (this.at(i + j))
+                {
+                    b |= 1;
+                }
+            }
+
+            bytes[i / 8] = b;
+        }
+
+        return bytes;
     }
 }

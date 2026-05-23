@@ -2,6 +2,9 @@ package com.aroos.qr.generator.encoding;
 
 import java.nio.charset.StandardCharsets;
 
+import com.aroos.qr.generator.encoding.factory.EncodingModeFactory;
+import com.aroos.qr.generator.encoding.factory.IEncodingModeFactory;
+
 /**
  * The {@link EncodingMode} enumeration defines the various encoding modes that
  * a QR can encode its data with.
@@ -131,5 +134,10 @@ public enum EncodingMode
         {
             return this.lengthValues[2];
         }
+    }
+
+    public static IEncodingModeFactory factory()
+    {
+        return new EncodingModeFactory();
     }
 }

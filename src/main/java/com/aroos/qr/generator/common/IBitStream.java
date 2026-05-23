@@ -11,12 +11,6 @@ import java.util.List;
 public interface IBitStream
 {
     /**
-     * Get the modifyable underlying {@link BitSet}.
-     * @return The bit set backing this stream.
-     */
-    BitSet getBits();
-
-    /**
      * Gets the current size of this bit stream. Note that this is NOT
      * equivalent to the size of the underlying {@link BitSet}.
      * @return The total number of bits put into this stream.

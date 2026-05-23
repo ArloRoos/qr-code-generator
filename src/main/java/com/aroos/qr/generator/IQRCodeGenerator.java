@@ -18,4 +18,14 @@ public interface IQRCodeGenerator
      * @return The generated QR code.
      */
     IQRCode generate(String content, ErrorCorrectionLevel level);
+
+    /**
+     * Generate a QR code encoding the given content string, with the given
+     * error correction level and version.
+     * @param content The content string to encode.
+     * @param level The error correction level.
+     * @param version The QR code version, from 1-40.
+     * @return The generated QR code.
+     */
+    IQRCode generate(String content, ErrorCorrectionLevel level, int version);
 }

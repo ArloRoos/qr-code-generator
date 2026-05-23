@@ -12,13 +12,13 @@ import com.aroos.qr.generator.png.pixels.IColor;
  * The {@link QRCode} class implements behavior for a structure representing
  * a graphical QR code. 
  */
-final class QRCode implements IQRCode
+public final class QRCode implements IQRCode
 {
     private final List<List<Module>> modules;
     private final int version;
     private final int size;
 
-    QRCode(final QRConfiguration config)
+    public QRCode(final QRConfiguration config)
     {
         this.version = config.version();
         this.size = computeSize(config.version());

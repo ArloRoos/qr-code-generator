@@ -2,6 +2,8 @@ package com.aroos.qr.generator.ec;
 
 import com.aroos.qr.generator.common.IBitStream;
 import com.aroos.qr.generator.common.QRConfiguration;
+import com.aroos.qr.generator.ec.factory.ErrorCorrectionEncoderFactory;
+import com.aroos.qr.generator.ec.factory.IErrorCorrectionEncoderFactory;
 
 /**
  * The {@link IErrorCorrectionEncoder} interface defines a utility for 
@@ -17,4 +19,9 @@ public interface IErrorCorrectionEncoder
      * @return The updated bit stream, with EC codewords added to the end.
      */
     IBitStream encode(IBitStream bits, QRConfiguration config);
+
+    static IErrorCorrectionEncoderFactory factory()
+    {
+        return new ErrorCorrectionEncoderFactory();
+    }
 }
