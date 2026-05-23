@@ -57,7 +57,7 @@ public final class GeneratorPolynomialsTest
 
         for (int i = 0; i < expectedExponents.length; i++)
         {
-            assertThat(Galois.log((int)sorted.get(i).getCoefficient()))
+            assertThat(Galois.antilog((int)sorted.get(i).getCoefficient()))
                 .isEqualTo(expectedExponents[i]);
         }
     }

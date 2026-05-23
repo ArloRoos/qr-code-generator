@@ -133,7 +133,7 @@ public final class ErrorCorrectionEncoderTest
 
     private static int randomVersion()
     {
-        return RANDOM.nextInt(1,41);
+        return RANDOM.nextInt(1, 41);
     }
 
     private static ErrorCorrectionLevel randomErrorCorrection()

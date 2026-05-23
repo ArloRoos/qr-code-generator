@@ -63,7 +63,7 @@ public final class ErrorCorrectionEncoder implements IErrorCorrectionEncoder
         final List<Byte> result = new ArrayList<>();
         final List<ITerm> terms = quotient.getRemainder().getTerms();
 
-        for (int i = 0; i < expectedCodewords; i++)
+        for (int i = expectedCodewords - 1; i >= 0; i--)
         {
             final int exponent = i;
 

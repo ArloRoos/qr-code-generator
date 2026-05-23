@@ -131,7 +131,7 @@ class BitEncodingTest
 
     private static int randomVersion()
     {
-        return RANDOM.nextInt(1,41);
+        return RANDOM.nextInt(1, 41);
     }
 
     private static ErrorCorrectionLevel randomErrorCorrection()
