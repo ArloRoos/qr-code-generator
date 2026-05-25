@@ -2,6 +2,7 @@ package com.aroos.qr.generator.modules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.aroos.qr.generator.common.QRConfiguration;
 import com.aroos.qr.generator.png.PNGImage;
@@ -33,6 +34,17 @@ public final class QRCode implements IQRCode
                 this.modules.get(i).add(new Module(false, false, false));
             }
         }
+    }
+
+    private QRCode(final int version, final List<List<Module>> originalModules)
+    {
+        this.version = version;
+        this.size = computeSize(version);
+        this.modules = originalModules.stream()
+            .map(mods -> mods.stream()
+                .map(m -> new Module(m.value(), m.isReserved(), m.isSet()))
+                .collect(Collectors.toCollection(ArrayList::new)))
+            .collect(Collectors.toCollection(ArrayList::new));
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -99,6 +111,25 @@ public final class QRCode implements IQRCode
         checkBounds(x, y);
         
         return this.modules.get(x).get(y).isReserved();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSet(final int x, final int y)
+    {
+        checkBounds(x, y);
+
+        return this.modules.get(x).get(y).isSet();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IQRCode copy()
+    {
+        return new QRCode(this.version, this.modules);
     }
 
     /**
@@ -175,11 +206,11 @@ public final class QRCode implements IQRCode
     // region Private types
     ////////////////////////////////////////////////////////////////////////////
 
-    private static record Module(boolean value, boolean isReserved, boolean set)
+    private static record Module(boolean value, boolean isReserved, boolean isSet)
     {
         public IColor toColor()
         {
-            return set
+            return isSet
                 ? value
                     ? new Grayscale(0, 255)
                     : new Grayscale(255, 255)
