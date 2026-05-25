@@ -15,4 +15,9 @@ public interface IQRCodeMasking
      * @return The masked QR code, with all reserved areas maintained.
      */
     IQRCode mask(IQRCode code);
+
+    static IQRCodeMasking instance()
+    {
+        return new QRCodeMasking();
+    }
 }

@@ -32,7 +32,7 @@ public enum MaskingPattern
 
         for (int i = 0; i < newCode.getSize(); i++)
         {
-            for (int j = 0; j < newCode.getSize(); i++)
+            for (int j = 0; j < newCode.getSize(); j++)
             {
                 if (!newCode.isReserved(i, j) && this.criteria.apply(i, j))
                 {

@@ -15,4 +15,9 @@ public interface IEvaluator
      * @return An integer score for how well the QR code performed.
      */
     int evaluate(IQRCode code);
+
+    static IEvaluator instance()
+    {
+        return new CompositeEvaluator();
+    }
 }

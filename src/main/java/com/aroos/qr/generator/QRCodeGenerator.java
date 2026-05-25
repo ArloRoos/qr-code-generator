@@ -12,6 +12,7 @@ import com.aroos.qr.generator.encoding.IQREncoding;
 import com.aroos.qr.generator.modules.DataBitModules;
 import com.aroos.qr.generator.modules.IDataBitModules;
 import com.aroos.qr.generator.modules.IQRCode;
+import com.aroos.qr.generator.modules.masking.IQRCodeMasking;
 
 /**
  * The {@link QRCodeGenerator} class implements the top level driver for 
@@ -71,8 +72,10 @@ public final class QRCodeGenerator implements IQRCodeGenerator
 
         dataBits.accept(withRemainder);
 
-        // TODO masking step
+        // Masking
+        final IQRCodeMasking masking = IQRCodeMasking.instance();
+        final IQRCode masked = masking.mask(code);
 
-        return code;
+        return masked;
     }
 }
