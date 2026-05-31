@@ -10,20 +10,27 @@ import com.aroos.qr.generator.modules.IQRCode;
  */
 public enum MaskingPattern
 {
-    MASK_0((x, y) -> (x + y) % 2 == 0),
-    MASK_1((x, y) -> x % 2 == 0),
-    MASK_2((x, y) -> y % 3 == 0),
-    MASK_3((x, y) -> (x + y) % 3 == 0),
-    MASK_4((x, y) -> (Math.floor((double)x / 2) + Math.floor((double)y / 3)) % 2 == 0),
-    MASK_5((x, y) -> ((x * y) % 2) + ((x * y) % 3) == 0),
-    MASK_6((x, y) -> (((x * y) % 2) + ((x * y) % 3)) % 2 == 0),
-    MASK_7((x, y) -> (((x + y) % 2) + ((x + y) % 3)) % 2 == 0);
+    MASK_0(0, (x, y) -> (x + y) % 2 == 0),
+    MASK_1(1, (x, y) -> x % 2 == 0),
+    MASK_2(2, (x, y) -> y % 3 == 0),
+    MASK_3(3, (x, y) -> (x + y) % 3 == 0),
+    MASK_4(4, (x, y) -> (Math.floor((double)x / 2) + Math.floor((double)y / 3)) % 2 == 0),
+    MASK_5(5, (x, y) -> ((x * y) % 2) + ((x * y) % 3) == 0),
+    MASK_6(6, (x, y) -> (((x * y) % 2) + ((x * y) % 3)) % 2 == 0),
+    MASK_7(7, (x, y) -> (((x + y) % 2) + ((x + y) % 3)) % 2 == 0);
 
+    private final int id;
     private final BiFunction<Integer, Integer, Boolean> criteria;
 
-    private MaskingPattern(final BiFunction<Integer, Integer, Boolean> criteria)
+    private MaskingPattern(final int id, final BiFunction<Integer, Integer, Boolean> criteria)
     {
+        this.id = id;
         this.criteria = criteria;
+    }
+
+    public int getId()
+    {
+        return this.id;
     }
 
     public IQRCode mask(final IQRCode code)
