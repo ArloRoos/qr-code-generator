@@ -13,6 +13,12 @@ import com.aroos.qr.generator.modules.DataBitModules;
 import com.aroos.qr.generator.modules.IDataBitModules;
 import com.aroos.qr.generator.modules.IQRCode;
 import com.aroos.qr.generator.modules.masking.IQRCodeMasking;
+import com.aroos.qr.generator.modules.masking.IQRCodeMasking.MaskResult;
+import com.aroos.qr.generator.modules.meta.FormatInfoModules;
+import com.aroos.qr.generator.modules.meta.IFormatInfoModules;
+import com.aroos.qr.generator.modules.meta.IVersionInfoModules;
+import com.aroos.qr.generator.modules.meta.VersionInfoModules;
+import com.aroos.qr.generator.png.PNGWriter;
 
 /**
  * The {@link QRCodeGenerator} class implements the top level driver for 
@@ -68,13 +74,24 @@ public final class QRCodeGenerator implements IQRCodeGenerator
 
         // QR code generation
         final IQRCode code = IQRCode.factory().provide(config);
+
+        PNGWriter.writeImage(code.toPNG(10), "only_patterns.png");
+
         final IDataBitModules dataBits = new DataBitModules(code);
 
         dataBits.accept(withRemainder);
 
         // Masking
         final IQRCodeMasking masking = IQRCodeMasking.instance();
-        final IQRCode masked = masking.mask(code);
+        final MaskResult maskResult = masking.mask(code);
+        final IQRCode masked = maskResult.masked();
+
+        // Format/version
+        final IFormatInfoModules formatModules = new FormatInfoModules(masked);
+        final IVersionInfoModules versionModules = new VersionInfoModules(masked);
+
+        formatModules.applyFormatInfo(maskResult.maskUsed(), config);
+        versionModules.applyVersionInfo(config);
 
         return masked;
     }

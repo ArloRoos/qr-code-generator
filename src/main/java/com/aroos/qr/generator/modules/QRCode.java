@@ -2,6 +2,7 @@ package com.aroos.qr.generator.modules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.aroos.qr.generator.common.QRConfiguration;
@@ -48,6 +49,21 @@ public final class QRCode implements IQRCode
     }
     
     ////////////////////////////////////////////////////////////////////////////
+    // region Object
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {inheritDoc}
+     */
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.modules.stream()
+            .flatMap(List::stream)
+            .toArray());
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
     // region IQRCode
     ////////////////////////////////////////////////////////////////////////////
     
@@ -88,7 +104,7 @@ public final class QRCode implements IQRCode
     {
         checkBounds(x, y);
 
-        this.setModule(x, y, new Module(value, true, true));
+        this.setModule(x, y, new Module(value, false, true));
     }
 
     /**
@@ -208,6 +224,12 @@ public final class QRCode implements IQRCode
 
     private static record Module(boolean value, boolean isReserved, boolean isSet)
     {
+        @Override
+        public int hashCode()
+        {
+            return Objects.hash(this.value, this.isReserved, this.isSet);
+        }
+
         public IColor toColor()
         {
             return isSet

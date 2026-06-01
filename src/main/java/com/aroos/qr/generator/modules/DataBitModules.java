@@ -83,7 +83,7 @@ public final class DataBitModules implements IDataBitModules
             // If the current column is the same as the timing pattern, skip it.
             if (this.currentX.get() == TIMING_PATTERN_COLUMN)
             {
-                this.currentX.incrementAndGet();
+                this.currentX.decrementAndGet();
             }
 
             // If we're still out of bounds after a column change, it means

@@ -24,17 +24,17 @@ public final class QRCodeMasking implements IQRCodeMasking
      * {@inheritDoc}
      */
     @Override
-    public IQRCode mask(final IQRCode code)
+    public MaskResult mask(final IQRCode code)
     {
         return Stream.of(MaskingPattern.values())
-            .map(pattern -> pattern.mask(code))
-            .map(masked -> new MaskTuple(this.evaluator.evaluate(masked), masked))
+            .map(pattern -> new MaskResult(pattern.mask(code), pattern))
+            .map(result -> new MaskTuple(this.evaluator.evaluate(result.masked()), result))
             .min(Comparator.comparing(MaskTuple::penalty))
-            .map(MaskTuple::masked)
+            .map(MaskTuple::result)
             .orElseThrow();
     }
 
-    private static record MaskTuple(int penalty, IQRCode masked)
+    private static record MaskTuple(int penalty, MaskResult result)
     {
         // No additional API.
     }

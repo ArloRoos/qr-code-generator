@@ -16,8 +16,8 @@ public final class QRCodeTest
     @Test
     public void toPNGTest()
     {
-        final String testContent = "https://www.thonky.com/qr-code-tutorial/module-placement-matrix";
-        final ErrorCorrectionLevel level = ErrorCorrectionLevel.LEVEL_H;
+        final String testContent = "HELLO WORLD";
+        final ErrorCorrectionLevel level = ErrorCorrectionLevel.LEVEL_Q;
         final IQRCodeGenerator generator = new QRCodeGenerator();
         final IQRCode code = generator.generate(testContent, level);
         final IPNGImage image = code.toPNG(5);

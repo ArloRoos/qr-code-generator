@@ -14,10 +14,15 @@ public interface IQRCodeMasking
      * @param code The code to mask.
      * @return The masked QR code, with all reserved areas maintained.
      */
-    IQRCode mask(IQRCode code);
+    MaskResult mask(IQRCode code);
 
     static IQRCodeMasking instance()
     {
         return new QRCodeMasking();
+    }
+
+    public record MaskResult(IQRCode masked, MaskingPattern maskUsed)
+    {
+        // No additional API.
     }
 }

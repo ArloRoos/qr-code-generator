@@ -1,4 +1,4 @@
-package com.aroos.qr.generator.modules;
+package com.aroos.qr.generator.modules.meta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,11 +13,12 @@ import com.aroos.qr.generator.common.IBitStream;
 import com.aroos.qr.generator.common.QRConfiguration;
 import com.aroos.qr.generator.common.util.LookupTables;
 import com.aroos.qr.generator.ec.ErrorCorrectionLevel;
+import com.aroos.qr.generator.modules.IQRCode;
 import com.aroos.qr.generator.modules.masking.MaskingPattern;
 
 /**
  * The {@link FormatInfoModules} class implements behavior for a service which
- * can apply format and version information modules to a QR code.
+ * can apply format information modules to a QR code.
  */
 public final class FormatInfoModules implements IFormatInfoModules
 {
@@ -26,9 +27,7 @@ public final class FormatInfoModules implements IFormatInfoModules
     ////////////////////////////////////////////////////////////////////////////
 
     private static final Map<FormatInfoKey, String> FORMAT_INFO_MAP = new HashMap<>();
-    private static final Map<Integer, String> VERSION_INFO_MAP = new HashMap<>();
     private static final Pattern FORMAT_INFO_PATTERN = Pattern.compile("([A-Z_]+):(\\d):([01]+)");
-    private static final Pattern VERSION_INFO_PATTERN = Pattern.compile("(\\d+):([01]+)");
     private static final int FORMAT_INFO_SIZE = 15;
     private static final int FORMAT_INFO_DIVIDER = 7;
 
@@ -42,13 +41,6 @@ public final class FormatInfoModules implements IFormatInfoModules
                 ErrorCorrectionLevel.valueOf(match.group(1))),
             match -> match.group(3),
             FORMAT_INFO_MAP::put);
-
-        LookupTables.fillTable(
-            "version_codes.txt",
-            VERSION_INFO_PATTERN,
-            match -> Integer.parseInt(match.group(1)),
-            match -> match.group(2),
-            VERSION_INFO_MAP::put);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -123,15 +115,7 @@ public final class FormatInfoModules implements IFormatInfoModules
 
         IntStream.range(0, FORMAT_INFO_SIZE)
             .forEach(i -> this.formatCoords.get(i).forEach(coord ->
-                this.qrCode.setModule(coord.x(), coord.y(), bitStream.at(i))));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void applyVersionInfo(final QRConfiguration config)
-    {
+                this.qrCode.setReservedModule(coord.x(), coord.y(), bitStream.at(i))));
     }
 
     ////////////////////////////////////////////////////////////////////////////
